@@ -42,7 +42,7 @@ PROGRAM_NAME = 'Infinium'
 
 def main():
     """
-    Start Infinium's main control flow routine.
+    Start Infinium's user interface and main event loop.
 
     Returns:
       None

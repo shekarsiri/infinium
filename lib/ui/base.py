@@ -41,6 +41,14 @@ class EndGoal(Enum):
     exit = 4
 
 
+class DatabaseType(Enum):
+    """
+    Defines supported database types.
+    """
+
+    yaml = 1
+
+
 class UserInterface(metaclass=ABCMeta):
     """
     Abstract base class that all user interfaces should inherit from.

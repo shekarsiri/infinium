@@ -70,18 +70,21 @@ def main():
         # or construct a new valuation model.
         if user_interface.end_goal == EndGoal.construct_model:
             # Connect to database.
-            database = connect_database(database_type, database_location)
+            database = connect_database(user_interface.database_type,
+                                        user_interface.database_location)
             
             # Extract testing set from data.
             testing_data = extract_testing_data(database)
             
             if user_interface.load_model:
                 # Load valuation model from disk.
-                valuation_model = load_valuation_model(model_path)
+                valuation_model = load_valuation_model(user_interface.model_path)
             
             else: 
                 # Extract training set from data.
                 training_data = extract_training_data(database)
+
+                # Decide which classifier to use.
             
                 # Construct the valuation model from training data.
                 valuation_model = construct_valuation_model(training_data, classifier)

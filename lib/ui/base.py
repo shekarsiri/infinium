@@ -52,7 +52,7 @@ class DatabaseType(Enum):
 class UserInterface(metaclass=ABCMeta):
     """
     Abstract base class that all user interfaces should inherit from.
-    Subclasses that overwrite ``__init__`` should have the same parameter list
+    Subclasses that override ``__init__`` should have the same parameter list
     as ``UserInterface.__init__`` or accept ``*args`` and ``**kwargs``.
 
     Args

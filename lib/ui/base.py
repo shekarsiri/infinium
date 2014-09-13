@@ -23,3 +23,18 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 __author__ = 'Jerrad Genson'
 __contact__ = 'jerradgenson@neomailbox.ch'
+
+
+# Python standard library imports.
+from enum import Enum
+
+
+class EndGoal(Enum):
+    """
+    Defines end goals the user can achieve by running Infinium.
+    """
+
+    construct_model = 1
+    add_database_entry = 2
+    analyze_stock = 3
+    exit = 4

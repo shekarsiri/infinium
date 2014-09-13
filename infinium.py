@@ -44,7 +44,7 @@ def main():
     """
     Start Infinium's user interface and main event loop.
 
-    Returns
+    Return
       None
 
     Raises
@@ -117,7 +117,7 @@ def parse_command_line():
     """
     Parse command line arguments to Infinium.
 
-    Returns
+    Return
       An instance of ``argparse.Namespace``.
 
     """

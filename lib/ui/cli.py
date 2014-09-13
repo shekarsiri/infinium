@@ -22,7 +22,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Infinium library imports.
 from lib.ui import base
-from lib.ui import config
+from lib.ui.config import configuration
 
 
 class CommandLineInterface(base.UserInterface):
@@ -37,19 +37,18 @@ class CommandLineInterface(base.UserInterface):
 
     def __init__(self, cl_args):
         self.__cl_args = cl_args
-        self.__configuration = config.load_configuration(cl_args.config_path)
 
     def end_goal(self):
-        return self.__cl_args.end_goal or config.get_end_goal(self.__configuration)
+        return self.__cl_args.end_goal or configuration.end_goal
 
     def database_type(self):
-        return self.__cl_args.database_type or config.get_database_type(self.__configuration)
+        return self.__cl_args.database_type or configuration.database_type
 
     def database_location(self):
-        return self.__cl_args.database_location or config.get_database_location(self.__configuration)
+        return self.__cl_args.database_location or configuration.database_location
 
     def model_path(self):
-        return self.__cl_args.model_path or config.get_model_path(self.__configuration)
+        return self.__cl_args.model_path or configuration.model_path
 
     def show_test_results(self):
         raise NotImplementedError('`show_test_results` not yet implemented!')

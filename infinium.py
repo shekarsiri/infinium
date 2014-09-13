@@ -54,6 +54,8 @@ def main():
 
     # Parse command line arguments.
     cl_args = parse_command_line()
+
+    # Launch user interface.
     if cl_args.graphical:
         # Use graphical user interface.
         raise NotImplementedError('GUI under construction. Please use CLI.')
@@ -61,8 +63,6 @@ def main():
     else:
         # Use command line interface.
         user_interface = CLI(cl_args)
-
-    # Launch user interface.
     
     # Enter main event loop.
     while True:
@@ -70,24 +70,30 @@ def main():
         # or construct a new valuation model.
         if user_interface.end_goal == EndGoal.construct_model:
             # Connect to database.
+            database = connect_database(database_type, database_location)
             
             # Extract testing set from data.
+            testing_data = extract_testing_data(database)
             
             if user_interface.load_model:
                 # Load valuation model from disk.
-                pass   
+                valuation_model = load_valuation_model(model_path)
             
             else: 
                 # Extract training set from data.
+                training_data = extract_training_data(database)
             
                 # Construct the valuation model from training data.
+                valuation_model = construct_valuation_model(training_data, classifier)
             
-                # Save model parameters to disk.
-                pass
+                # Save valuation model to disk.
+                save_valuation_model(model_path)
             
             # Use testing data to evaluate quality of model.
+            test_results = evaluate_model(valuation_model, testing_data)
             
-            # Save testing results to disk.
+            # Show results to user.
+            user_interface.show_test_results(test_results)
             
         elif user_interface.end_goal == EndGoal.add_database_entry:
             pass

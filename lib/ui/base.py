@@ -52,6 +52,11 @@ class DatabaseType(Enum):
 class UserInterface(metaclass=ABCMeta):
     """
     Abstract base class that all user interfaces should inherit from.
+    Subclasses that overwrite ``__init__`` should have the same parameter list
+    as ``UserInterface.__init__`` or accept ``*args`` and ``**kwargs``.
+
+    Args
+      cl_args: command line arguments from ``infinium.parse_command_line``.
     """
 
     @abstractproperty
@@ -95,10 +100,10 @@ class UserInterface(metaclass=ABCMeta):
         """
         Show results from testing the valuation model to the user.
 
-        Args:
+        Args
           test_results: ???
 
-        Returns:
+        Returns
           None
 
         """

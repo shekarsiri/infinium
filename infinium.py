@@ -33,7 +33,7 @@ import sys
 
 # Infinium library imports.
 from lib.ui.base import EndGoal
-from lib.ui.cli import CLI
+from lib.ui.cli import CommandLineInterface
 
 
 # Module constants.
@@ -44,10 +44,10 @@ def main():
     """
     Start Infinium's user interface and main event loop.
 
-    Returns:
+    Returns
       None
 
-    Raises:
+    Raises
       NotImplementedError, SelectionError
 
     """
@@ -62,7 +62,7 @@ def main():
 
     else:
         # Use command line interface.
-        user_interface = CLI(cl_args)
+        user_interface = CommandLineInterface(cl_args)
     
     # Enter main event loop.
     while True:
@@ -117,7 +117,7 @@ def parse_command_line():
     """
     Parse command line arguments to Infinium.
 
-    Returns:
+    Returns
       An instance of ``argparse.Namespace``.
 
     """

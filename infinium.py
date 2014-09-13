@@ -125,7 +125,9 @@ def parse_command_line():
                         dest='debug')
 
     parser.add_argument('-g', '--graphical',
-                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME))
+                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
+                        action='store_true',
+                        dest='graphical')
 
     cl_args = parser.parse_args()
 

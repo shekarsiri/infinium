@@ -89,3 +89,12 @@ INSTALL_VAR = 'INFINIUM_INSTALL'
 
 # Default installation location.
 DEFAULT_INSTALL_PATH = Path('/usr/lib/infinium')
+
+
+class ExitCode(Enum):
+    """
+    Defines Infinium exit codes.
+    """
+
+    success = 0
+    config_file_not_found = 1

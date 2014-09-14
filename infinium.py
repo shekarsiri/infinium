@@ -31,7 +31,7 @@ import logging
 from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import get_config, ConfigFileNotFoundError
-from lib.consts import MainOperation, Developer, PROGRAM_NAME
+from lib.consts import MainOperation, Developer, PROGRAM_NAME, ExitCode
 
 
 # Module header.
@@ -75,7 +75,7 @@ def main():
         msg = 'Critical error: the configuration file could not be found. '
         msg += '{} will now exit.'.format(PROGRAM_NAME)
         user_interface.show_error(msg)
-        sys.exit(1)
+        sys.exit(ExitCode.config_file_not_found)
     
     # Enter main event loop.
     while True:

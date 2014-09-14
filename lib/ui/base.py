@@ -78,7 +78,7 @@ class UserInterface(metaclass=ABCMeta):
         pass
 
     @abstractproperty
-    def database_location(self):
+    def database_path(self):
         """
         The location of the database to connect with as a Path object.
         """

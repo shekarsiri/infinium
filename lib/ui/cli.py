@@ -44,7 +44,7 @@ class CommandLineInterface(base.UserInterface):
     def database_type(self):
         return self.__cl_args.database_type or configuration.database_type
 
-    def database_location(self):
+    def database_path(self):
         return self.__cl_args.database_path or configuration.database_path
 
     def model_path(self):

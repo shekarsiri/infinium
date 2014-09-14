@@ -71,7 +71,7 @@ def main():
         if user_interface.main_operation == MainOperation.construct_model:
             # Connect to database.
             database = connect_database(user_interface.database_type,
-                                        user_interface.database_location)
+                                        user_interface.database_path)
             
             # Extract testing set from data.
             testing_data = extract_testing_data(database)

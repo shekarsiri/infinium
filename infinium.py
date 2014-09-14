@@ -34,6 +34,7 @@ import sys
 # Infinium library imports.
 from lib.ui.base import MainOperation, STR_TO_MAIN_OPERATION, STR_TO_DATABASE_TYPE
 from lib.ui.cli import CommandLineInterface
+from lib.ui.config import configuration
 
 
 # Module constants.
@@ -72,8 +73,8 @@ def main():
             raise NotImplementedError('`construct_model` operation not yet implemented.')
 
             # Connect to database.
-            database = connect_database(user_interface.database_type,
-                                        user_interface.database_path)
+            database = connect_database(configuration.database_type,
+                                        configuration.database_path)
             
             # Extract testing set from data.
             testing_data = extract_testing_data(database)
@@ -154,13 +155,6 @@ def parse_command_line():
                         dest='main_operation',
                         default=None,
                         action=MainOperationAction)
-
-    parser.add_argument('--database-type',
-                        help='Stock data is stored in this type of database.',
-                        choices=STR_TO_DATABASE_TYPE,
-                        dest='database_type',
-                        default=None,
-                        action=DatabaseTypeAction)
 
     cl_args = parser.parse_args()
 

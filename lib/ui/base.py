@@ -84,23 +84,6 @@ class UserInterface(metaclass=ABCMeta):
         pass
 
     @abstractproperty
-    def database_type(self):
-        """
-        The type of database to connect with.
-        Must be a value defined by DatabaseType.
-        """
-
-        pass
-
-    @abstractproperty
-    def database_path(self):
-        """
-        The location of the database to connect with as a Path object.
-        """
-
-        pass
-
-    @abstractproperty
     def model_path(self):
         """
         Path to the valuation model file. Must be a ``Path`` object.

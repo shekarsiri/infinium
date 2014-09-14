@@ -1,10 +1,9 @@
 """
 An API for interfacing with the Infinium configuration file. The only public
-component is ``configuration``, an object used to access and update config file
-fields. It is instantiated, and the config file read, upon import. There is
-only one ``configuration`` object, because it is meant to be shared between all
-parts of the program to keep configuration options in sync. The
-``configuration`` object is thread safe.
+component is ``get_config``, which returns a ``configuration`` object used to
+access and update config file fields. There is only one ``configuration``
+object, because it is meant to be shared between all parts of the program to
+keep configuration options in sync.
 
 The name of the configuration file is '{}'. The configuration loader first
 searches for it in the current working directory, then in the location
@@ -13,6 +12,8 @@ Infinium installation directory, specified by the '{}' environment variable.
 
 Upon import, this module may raise any exception that ``Path.open`` and
 ``yaml.load`` may raise, as well as ``ConfigFileNotFoundError``.
+
+This module is thread safe.
 
 Copyright 2014 Jerrad M. Genson
 
@@ -58,6 +59,25 @@ __doc__ = __doc__.format(consts.CONFIG_FILE_NAME,
                          consts.INSTALL_VAR)
 
 
+# Global module variables used to keep configuration file in sync.
+_configuration = None
+_thread_lock = threading.Lock()
+
+
+def get_config():
+    """
+    Return Infinium configuration object.
+    """
+    global _configuration
+
+    _thread_lock.acquire()
+    if not _configuration:
+        _configuration = _Configuration()
+
+    _thread_lock.release()
+    return _configuration
+
+
 class ConfigFileNotFoundError(Exception):
     """
     Indicates the Infinium configuration file could not be found at any of the
@@ -69,7 +89,6 @@ class ConfigFileNotFoundError(Exception):
 
 class _Configuration:
     def __init__(self):
-        self.__thread_lock = threading.Lock()
         cwd_config_path = Path(consts.CONFIG_FILE_NAME)
         environ_config_path = Path(getenv(consts.CONFIG_VAR,
                                           consts.DEFAULT_CONFIG_PATH)) / Path(consts.CONFIG_FILE_NAME)
@@ -99,7 +118,7 @@ class _Configuration:
         self.__config_path = config_path
 
     def __update_field(self, field, new_value):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         old_value = self.__configuration[field]
         self.__configuration[field] = new_value
         try:
@@ -114,13 +133,13 @@ class _Configuration:
             raise
 
         finally:
-            self.__thread_lock.release()
+            _thread_lock.release()
 
     @property
     def main_operation(self):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         value = consts.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
-        self.__thread_lock.release()
+        _thread_lock.release()
         return value
 
     @main_operation.setter
@@ -129,9 +148,9 @@ class _Configuration:
 
     @property
     def stock_name(self):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         value = self.__configuration['stock_name']
-        self.__thread_lock.release()
+        _thread_lock.release()
         return value
 
     @stock_name.setter
@@ -140,9 +159,9 @@ class _Configuration:
 
     @property
     def database_type(self):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         value = consts.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
-        self.__thread_lock.release()
+        _thread_lock.release()
         return value
 
     @database_type.setter
@@ -151,9 +170,9 @@ class _Configuration:
 
     @property
     def database_path(self):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         value = Path(self.__configuration['database_path'])
-        self.__thread_lock.release()
+        _thread_lock.release()
         return value
 
     @database_path.setter
@@ -162,14 +181,11 @@ class _Configuration:
 
     @property
     def model_path(self):
-        self.__thread_lock.acquire()
+        _thread_lock.acquire()
         value = Path(self.__configuration['model_path'])
-        self.__thread_lock.release()
+        _thread_lock.release()
         return value
 
     @model_path.setter
     def model_path(self, value):
         self.__update_field('model_path', str(value))
-
-
-configuration = _Configuration()

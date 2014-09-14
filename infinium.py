@@ -29,7 +29,7 @@ import sys
 # Infinium library imports.
 from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
-from lib.ui.config import configuration
+from lib.ui.config import get_config
 from lib.consts import MainOperation, Developer
 
 
@@ -52,6 +52,9 @@ def main():
 
     # Parse command line arguments.
     cl_args = parse_command_line()
+
+    # Get configuration options.
+    configuration = get_config()
 
     # Launch user interface.
     if cl_args.graphical:

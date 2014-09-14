@@ -24,7 +24,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 import argparse
 from lib.consts import PROGRAM_NAME, STR_TO_MAIN_OPERATION, Developer
 from lib.ui import base
-from lib.ui.config import configuration
+from lib.ui.config import get_config
 
 
 # Module header.
@@ -44,14 +44,15 @@ class CommandLineInterface(base.UserInterface):
 
     def __init__(self, cl_args):
         self.__cl_args = cl_args
+        self.__configuration = get_config()
 
     @property
     def main_operation(self):
-        return self.__cl_args.main_operation or configuration.main_operation
+        return self.__cl_args.main_operation or self.__configuration.main_operation
 
     @property
     def model_path(self):
-        return self.__cl_args.model_path or configuration.model_path
+        return self.__cl_args.model_path or self.__configuration.model_path
 
     def show_test_results(self):
         raise NotImplementedError('`show_test_results` not yet implemented!')

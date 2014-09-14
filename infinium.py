@@ -65,8 +65,7 @@ def main():
     except (ConfigurationError, OSError) as error:
         configuration = None
         logging.critical(error)
-        err_msg = 'Critical Error: the configuration file could not be opened. '
-        err_msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
+        err_msg = str(error)
 
     # Launch user interface.
     if cl_args.graphical:

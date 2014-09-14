@@ -92,6 +92,7 @@ class ConfigurationError(Exception):
 
     pass
 
+
 class ConfigFileNotFoundError(ConfigurationError):
     """
     Indicates the Infinium configuration file could not be found at any of the
@@ -133,7 +134,8 @@ class _Configuration:
 
         # Config file could not be found.
         else:
-            raise ConfigFileNotFoundError('Config file could not be found.')
+            msg = 'The configuration file could not be found.'
+            raise ConfigFileNotFoundError(msg)
 
         with config_path.open() as config_file:
             self.__configuration = load(config_file, Loader)

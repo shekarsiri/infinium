@@ -31,9 +31,9 @@ __contact__ = 'jerradgenson@neomailbox.ch'
 import sys
 
 # Infinium library imports.
-from lib.ui.base import MainOperation
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import configuration
+from lib.consts import MainOperation
 
 
 def main():

@@ -22,9 +22,8 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Infinium library imports.
 import argparse
-from lib.consts import PROGRAM_NAME
+from lib.consts import PROGRAM_NAME, STR_TO_MAIN_OPERATION
 from lib.ui import base
-from lib.ui.base import STR_TO_MAIN_OPERATION
 from lib.ui.config import configuration
 
 

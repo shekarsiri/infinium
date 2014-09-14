@@ -44,7 +44,7 @@ except ImportError:
     from yaml import Loader, Dumper
 
 # Infinium library imports.
-from lib.ui import base
+from lib import consts
 
 
 class _Configuration:
@@ -76,13 +76,13 @@ class _Configuration:
     @property
     def main_operation(self):
         self.__thread_lock.acquire()
-        value = base.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+        value = consts.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
         self.__thread_lock.release()
         return value
 
     @main_operation.setter
     def main_operation(self, value):
-        self.__update_field('main_operation', base.MAIN_OPERATION_TO_STR[value])
+        self.__update_field('main_operation', consts.MAIN_OPERATION_TO_STR[value])
 
     @property
     def stock_name(self):
@@ -98,13 +98,13 @@ class _Configuration:
     @property
     def database_type(self):
         self.__thread_lock.acquire()
-        value = base.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+        value = consts.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
         self.__thread_lock.release()
         return value
 
     @database_type.setter
     def database_type(self, value):
-        self.__update_field('database_type', base.DATABASE_TYPE_TO_STR[value])
+        self.__update_field('database_type', consts.DATABASE_TYPE_TO_STR[value])
 
     @property
     def database_path(self):

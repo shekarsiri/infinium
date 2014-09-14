@@ -22,6 +22,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Python standard library imports.
 from enum import Enum
+from pathlib import Path
 
 
 class Developer:
@@ -72,3 +73,19 @@ STR_TO_DATABASE_TYPE = {'yml': DatabaseType.yml}
 
 # Maps DatabaseType values to strings.
 DATABASE_TYPE_TO_STR = {value: key for key, value in STR_TO_DATABASE_TYPE.items()}
+
+
+# Name of configuration file.
+CONFIG_FILE_NAME = '.infinium.yml'
+
+# Name of config file path environment variable.
+CONFIG_VAR = 'INFINIUM_CONFIG'
+
+# Default config file location.
+DEFAULT_CONFIG_PATH = Path('~/')
+
+# Name of installation directory environment variable.
+INSTALL_VAR = 'INFINIUM_INSTALL'
+
+# Default installation location.
+DEFAULT_INSTALL_PATH = Path('/usr/lib/infinium')

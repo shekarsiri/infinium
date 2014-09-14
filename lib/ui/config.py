@@ -1,12 +1,18 @@
 """
 An API for interfacing with the Infinium configuration file. The only public
 component is ``configuration``, an object used to access and update config file
-fields. There is only one ``configuration`` object, because it is meant to be
-shared between all parts of the program to keep configuration options in sync.
-The ``configuration`` object is thread safe.
+fields. It is instantiated, and the config file read, upon import. There is
+only one ``configuration`` object, because it is meant to be shared between all
+parts of the program to keep configuration options in sync. The
+``configuration`` object is thread safe.
 
-Upon import, this module may raise any exception that ``open`` and ``yaml.load``
-may raise.
+The name of the configuration file is '{}'. The configuration loader first
+searches for it in the current working directory, then in the location
+specified by the '{}' environment variable, and finally in the root of the
+Infinium installation directory, specified by the '{}' environment variable.
+
+Upon import, this module may raise any exception that ``Path.open`` and
+``yaml.load`` may raise, as well as ``ConfigFileNotFoundError``.
 
 Copyright 2014 Jerrad M. Genson
 
@@ -30,6 +36,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 # Python standard library imports.
 import threading
 from pathlib import Path
+from os import getenv
 
 # Third-party library imports.
 from yaml import load, dump
@@ -46,22 +53,57 @@ from lib import consts
 # Module header.
 __maintainer__ = consts.Developer.JERRAD_GENSON
 __contact__ = consts.Developer.EMAIL[__maintainer__]
+__doc__ = __doc__.format(consts.CONFIG_FILE_NAME,
+                         consts.CONFIG_VAR,
+                         consts.INSTALL_VAR)
+
+
+class ConfigFileNotFoundError(Exception):
+    """
+    Indicates the Infinium configuration file could not be found at any of the
+    locations that ``_Configuration`` checks for it.
+    """
+
+    pass
 
 
 class _Configuration:
-    __FILE_NAME = '.infinium.yml'
-
     def __init__(self):
         self.__thread_lock = threading.Lock()
-        with open(self.__FILE_NAME) as config_file:
+        cwd_config_path = Path(consts.CONFIG_FILE_NAME)
+        environ_config_path = Path(getenv(consts.CONFIG_VAR,
+                                          consts.DEFAULT_CONFIG_PATH)) / Path(consts.CONFIG_FILE_NAME)
+
+        install_config_path = Path(getenv(consts.INSTALL_VAR,
+                                          consts.DEFAULT_INSTALL_PATH)) / Path(consts.CONFIG_FILE_NAME)
+
+        # First look for config file in current working directory.
+        if cwd_config_path.exists():
+            config_path = Path(consts.CONFIG_FILE_NAME)
+
+        # Next, look for config file at config environment variable.
+        elif environ_config_path.exists():
+            config_path = environ_config_path
+
+        # Finally try looking for config file in installation directory.
+        elif install_config_path.exists():
+            config_path = install_config_path
+
+        # Config file could not be found.
+        else:
+            raise ConfigFileNotFoundError()
+
+        with config_path.open() as config_file:
             self.__configuration = load(config_file, Loader)
+
+        self.__config_path = config_path
 
     def __update_field(self, field, new_value):
         self.__thread_lock.acquire()
         old_value = self.__configuration[field]
         self.__configuration[field] = new_value
         try:
-            with open(self.__FILE_NAME, 'w') as config_file:
+            with self.__config_path.open('w') as config_file:
                 dump(self.__configuration,
                      config_file,
                      Dumper=Dumper,

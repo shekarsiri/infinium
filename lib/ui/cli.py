@@ -38,15 +38,19 @@ class CommandLineInterface(base.UserInterface):
     def __init__(self, cl_args):
         self.__cl_args = cl_args
 
+    @property
     def main_operation(self):
         return self.__cl_args.main_operation or configuration.main_operation
 
+    @property
     def database_type(self):
         return self.__cl_args.database_type or configuration.database_type
 
+    @property
     def database_path(self):
         return self.__cl_args.database_path or configuration.database_path
 
+    @property
     def model_path(self):
         return self.__cl_args.model_path or configuration.model_path
 

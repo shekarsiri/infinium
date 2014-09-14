@@ -32,7 +32,7 @@ from os import getenv
 from lib import consts
 from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
-from lib.ui.config import get_config, ConfigFileNotFoundError
+from lib.ui.config import get_config, ConfigurationError, ConfigFileCorruptError
 
 
 # Module header.
@@ -62,10 +62,10 @@ def main():
     try:
         configuration = get_config()
 
-    except (ConfigFileNotFoundError, OSError) as error:
+    except (ConfigurationError, OSError) as error:
         configuration = None
         logging.critical(error)
-        err_msg = 'Critical Error: the configuration file could not be found. '
+        err_msg = 'Critical Error: the configuration file could not be opened. '
         err_msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
 
     # Launch user interface.
@@ -85,51 +85,57 @@ def main():
     while True:
         # Decide whether to analyze a stock, add a new entry to the database, 
         # or construct a new valuation model.
-        if user_interface.main_operation == consts.MainOperation.construct_model:
-            raise NotImplementedError('`construct_model` operation not yet implemented.')
+        try:
+            if user_interface.main_operation == consts.MainOperation.construct_model:
+                raise NotImplementedError('`construct_model` operation not yet implemented.')
 
-            # Connect to database.
-            database = connect_database(configuration.database_type,
-                                        configuration.database_path)
-            
-            # Extract testing set from data.
-            testing_data = extract_testing_data(database)
-            
-            if user_interface.load_model:
-                # Load valuation model from disk.
-                valuation_model = load_valuation_model(user_interface.model_path)
-            
-            else: 
-                # Extract training set from data.
-                training_data = extract_training_data(database)
+                # Connect to database.
+                database = connect_database(configuration.database_type,
+                                            configuration.database_path)
 
-                # Decide which classifier to use.
-            
-                # Construct the valuation model from training data.
-                valuation_model = construct_valuation_model(training_data, classifier)
-            
-                # Save valuation model to disk.
-                save_valuation_model(model_path)
-            
-            # Use testing data to evaluate quality of model.
-            test_results = evaluate_model(valuation_model, testing_data)
-            
-            # Show results to user.
-            user_interface.show_test_results(test_results)
-            
-        elif user_interface.main_operation == consts.MainOperation.add_database_entry:
-            raise NotImplementedError('`add_database_entry` operation not yet implemented.')
-            
-        elif user_interface.main_operation == consts.MainOperation.analyze_stock:
-            raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+                # Extract testing set from data.
+                testing_data = extract_testing_data(database)
 
-        elif user_interface.main_operation == consts.MainOperation.exit:
-            sys.exit(consts.ExitCode.success)
-            
-        else:
-            # Invalid selection.
-            err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
-            raise SelectionError(err_msg)
+                if user_interface.load_model:
+                    # Load valuation model from disk.
+                    valuation_model = load_valuation_model(user_interface.model_path)
+
+                else:
+                    # Extract training set from data.
+                    training_data = extract_training_data(database)
+
+                    # Decide which classifier to use.
+
+                    # Construct the valuation model from training data.
+                    valuation_model = construct_valuation_model(training_data, classifier)
+
+                    # Save valuation model to disk.
+                    save_valuation_model(model_path)
+
+                # Use testing data to evaluate quality of model.
+                test_results = evaluate_model(valuation_model, testing_data)
+
+                # Show results to user.
+                user_interface.show_test_results(test_results)
+
+            elif user_interface.main_operation == consts.MainOperation.add_database_entry:
+                raise NotImplementedError('`add_database_entry` operation not yet implemented.')
+
+            elif user_interface.main_operation == consts.MainOperation.analyze_stock:
+                raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+
+            elif user_interface.main_operation == consts.MainOperation.exit:
+                sys.exit(consts.ExitCode.success)
+
+            else:
+                # Invalid selection.
+                err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
+                raise SelectionError(err_msg)
+
+        except ConfigFileCorruptError as error:
+            logging.critical(error)
+            user_interface.show_error(str(error))
+            sys.exit(consts.ExitCode.config_file_corrupt)
 
 
 def configure_logging(cl_args):

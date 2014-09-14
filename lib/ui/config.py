@@ -84,10 +84,27 @@ def get_config():
     return _configuration
 
 
-class ConfigFileNotFoundError(Exception):
+class ConfigurationError(Exception):
+    """
+    Indicates a general error with the configuration object. Base Exception
+    for  ``config``. All other exceptions should inherit from this.
+    """
+
+    pass
+
+class ConfigFileNotFoundError(ConfigurationError):
     """
     Indicates the Infinium configuration file could not be found at any of the
     locations that ``_Configuration`` checks for it.
+    """
+
+    pass
+
+
+class ConfigFileCorruptError(ConfigurationError):
+    """
+    Indicates the configuration file has become corrupted.
+    Example: name of a field was inadvertently changed.
     """
 
     pass
@@ -141,11 +158,27 @@ class _Configuration:
         finally:
             _thread_lock.release()
 
+    def __handle_key_error(self, field_name):
+        msg = 'Config file field "{}" missing from config file "{}".'
+        msg = msg.format(field_name, self.config_path)
+        raise ConfigFileCorruptError(msg)
+
+    @property
+    def config_path(self):
+        return self.__config_path
+
     @property
     def main_operation(self):
         _thread_lock.acquire()
-        value = consts.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
-        _thread_lock.release()
+        try:
+            value = consts.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+
+        except KeyError:
+            self.__handle_key_error('main_operation')
+
+        finally:
+            _thread_lock.release()
+
         return value
 
     @main_operation.setter
@@ -155,8 +188,15 @@ class _Configuration:
     @property
     def stock_name(self):
         _thread_lock.acquire()
-        value = self.__configuration['stock_name']
-        _thread_lock.release()
+        try:
+            value = self.__configuration['stock_name']
+
+        except KeyError:
+            self.__handle_key_error('stock_name')
+
+        finally:
+            _thread_lock.release()
+
         return value
 
     @stock_name.setter
@@ -166,8 +206,15 @@ class _Configuration:
     @property
     def database_type(self):
         _thread_lock.acquire()
-        value = consts.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
-        _thread_lock.release()
+        try:
+            value = consts.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+
+        except KeyError:
+            self.__handle_key_error('database_type')
+
+        finally:
+            _thread_lock.release()
+
         return value
 
     @database_type.setter
@@ -177,8 +224,15 @@ class _Configuration:
     @property
     def database_path(self):
         _thread_lock.acquire()
-        value = Path(self.__configuration['database_path'])
-        _thread_lock.release()
+        try:
+            value = Path(self.__configuration['database_path'])
+
+        except KeyError:
+            self.__handle_key_error('database_path')
+
+        finally:
+            _thread_lock.release()
+
         return value
 
     @database_path.setter
@@ -188,8 +242,15 @@ class _Configuration:
     @property
     def model_path(self):
         _thread_lock.acquire()
-        value = Path(self.__configuration['model_path'])
-        _thread_lock.release()
+        try:
+            value = Path(self.__configuration['model_path'])
+
+        except KeyError:
+            self.__handle_key_error('model_path')
+
+        finally:
+            _thread_lock.release()
+
         return value
 
     @model_path.setter

@@ -107,3 +107,4 @@ class ExitCode(Enum):
 
     success = 0
     config_file_not_found = 1
+    config_file_corrupt = 2

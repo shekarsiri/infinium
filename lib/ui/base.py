@@ -41,7 +41,12 @@ class UserInterface(metaclass=ABCMeta):
 
     Args
       cl_args: command line arguments from ``infinium.parse_command_line``.
+      configuration: A configuration object from ``lib.ui.config``.
+
     """
+
+    def __init__(self, cl_args, configuration):
+        pass
 
     @abstractproperty
     def main_operation(self):
@@ -67,6 +72,21 @@ class UserInterface(metaclass=ABCMeta):
 
         Args
           test_results: ???
+
+        Returns
+          None
+
+        """
+
+        pass
+
+    @abstractmethod
+    def show_error(self, message):
+        """
+        Show error message to the user.
+
+        Args
+          message: error message as a string.
 
         Returns
           None

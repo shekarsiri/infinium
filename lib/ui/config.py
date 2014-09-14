@@ -10,9 +10,6 @@ searches for it in the current working directory, then in the location
 specified by the '{}' environment variable, and finally in the root of the
 Infinium installation directory, specified by the '{}' environment variable.
 
-Upon import, this module may raise any exception that ``Path.open`` and
-``yaml.load`` may raise, as well as ``ConfigFileNotFoundError``.
-
 This module is thread safe.
 
 Copyright 2014 Jerrad M. Genson
@@ -66,8 +63,17 @@ _thread_lock = threading.Lock()
 
 def get_config():
     """
-    Return Infinium configuration object.
+    Get Infinium configuration object.
+
+    Returns
+      The configuration object.
+
+    Raises
+      Any exception that ``Path.open`` and ``yaml.load`` may raise, as well as
+      ``ConfigFileNotFoundError``.
+
     """
+
     global _configuration
 
     _thread_lock.acquire()

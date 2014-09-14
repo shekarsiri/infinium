@@ -25,12 +25,13 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Python standard library imports.
 import sys
+import logging
 
 # Infinium library imports.
 from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
-from lib.ui.config import get_config
-from lib.consts import MainOperation, Developer
+from lib.ui.config import get_config, ConfigFileNotFoundError
+from lib.consts import MainOperation, Developer, PROGRAM_NAME
 
 
 # Module header.
@@ -54,7 +55,12 @@ def main():
     cl_args = parse_command_line()
 
     # Get configuration options.
-    configuration = get_config()
+    try:
+        configuration = get_config()
+
+    except ConfigFileNotFoundError as config_file_not_found_error:
+        configuration = None
+        logging.critical(config_file_not_found_error)
 
     # Launch user interface.
     if cl_args.graphical:
@@ -63,7 +69,13 @@ def main():
 
     else:
         # Use command line interface.
-        user_interface = CommandLineInterface(cl_args)
+        user_interface = CommandLineInterface(cl_args, configuration)
+
+    if not configuration:
+        msg = 'Critical error: the configuration file could not be found. '
+        msg += '{} will now exit.'.format(PROGRAM_NAME)
+        user_interface.show_error(msg)
+        sys.exit(1)
     
     # Enter main event loop.
     while True:

@@ -116,7 +116,7 @@ class _Configuration:
 
         # Config file could not be found.
         else:
-            raise ConfigFileNotFoundError()
+            raise ConfigFileNotFoundError('Config file could not be found.')
 
         with config_path.open() as config_file:
             self.__configuration = load(config_file, Loader)

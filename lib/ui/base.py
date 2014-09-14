@@ -21,12 +21,16 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-__author__ = 'Jerrad Genson'
-__contact__ = 'jerradgenson@neomailbox.ch'
-
-
 # Python standard library imports.
 from abc import ABCMeta, abstractproperty, abstractmethod
+
+# Infinium library imports.
+from lib.consts import Developer
+
+
+# Module header.
+__maintainer__ = Developer.JERRAD_GENSON
+__contact__ = Developer.EMAIL[__maintainer__]
 
 
 class UserInterface(metaclass=ABCMeta):

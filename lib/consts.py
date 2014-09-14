@@ -20,11 +20,22 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-__author__ = 'Jerrad Genson'
-__contact__ = 'jerradgenson@neomailbox.ch'
-
 # Python standard library imports.
 from enum import Enum
+
+
+class Developer:
+    """
+    Defines names and email addresses of all core Infinium developers.
+    """
+
+    JERRAD_GENSON = 'Jerrad Genson'
+
+    # Email addresses of all core Infinium developers.
+    EMAIL = {JERRAD_GENSON: 'jerradgenson@neomailbox.ch'}
+
+__maintainer__ = Developer.JERRAD_GENSON
+__contact__ = Developer.EMAIL[__maintainer__]
 
 # Name of this program.
 PROGRAM_NAME = 'Infinium'

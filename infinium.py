@@ -23,17 +23,18 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-__author__ = 'Jerrad Genson'
-__contact__ = 'jerradgenson@neomailbox.ch'
-
-
 # Python standard library imports.
 import sys
 
 # Infinium library imports.
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import configuration
-from lib.consts import MainOperation
+from lib.consts import MainOperation, Developer
+
+
+# Module header.
+__maintainer__ = Developer.JERRAD_GENSON
+__contact__ = Developer.EMAIL[__maintainer__]
 
 
 def main():

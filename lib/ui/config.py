@@ -27,10 +27,6 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
-__author__ = 'Jerrad Genson'
-__contact__ = 'jerradgenson@neomailbox.ch'
-
-
 # Python standard library imports.
 import threading
 from pathlib import Path
@@ -45,6 +41,11 @@ except ImportError:
 
 # Infinium library imports.
 from lib import consts
+
+
+# Module header.
+__maintainer__ = consts.Developer.JERRAD_GENSON
+__contact__ = consts.Developer.EMAIL[__maintainer__]
 
 
 class _Configuration:

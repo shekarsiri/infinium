@@ -22,9 +22,14 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Infinium library imports.
 import argparse
-from lib.consts import PROGRAM_NAME, STR_TO_MAIN_OPERATION
+from lib.consts import PROGRAM_NAME, STR_TO_MAIN_OPERATION, Developer
 from lib.ui import base
 from lib.ui.config import configuration
+
+
+# Module header.
+__maintainer__ = Developer.JERRAD_GENSON
+__contact__ = Developer.EMAIL[__maintainer__]
 
 
 class CommandLineInterface(base.UserInterface):

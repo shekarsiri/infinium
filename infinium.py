@@ -27,6 +27,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 
 # Infinium library imports.
+from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import configuration
 from lib.consts import MainOperation, Developer
@@ -110,14 +111,6 @@ def main():
             # Invalid selection.
             msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
             raise SelectionError(msg)
-
-
-class SelectionError(Exception):
-    """
-    Raised when an instance of UserInterface specifies an invalid selection.
-    """
-
-    pass
 
 
 if __name__ == '__main__':

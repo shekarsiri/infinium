@@ -74,3 +74,11 @@ class UserInterface(metaclass=ABCMeta):
         """
 
         pass
+
+
+class SelectionError(Exception):
+    """
+    Raised when an instance of UserInterface specifies an invalid selection.
+    """
+
+    pass

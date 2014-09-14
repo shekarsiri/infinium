@@ -26,17 +26,18 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 # Python standard library imports.
 import sys
 import logging
+from os import getenv
 
 # Infinium library imports.
+from lib import consts
 from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import get_config, ConfigFileNotFoundError
-from lib.consts import MainOperation, Developer, PROGRAM_NAME, ExitCode
 
 
 # Module header.
-__maintainer__ = Developer.JERRAD_GENSON
-__contact__ = Developer.EMAIL[__maintainer__]
+__maintainer__ = consts.Developer.JERRAD_GENSON
+__contact__ = consts.Developer.EMAIL[__maintainer__]
 
 
 def main():
@@ -53,6 +54,9 @@ def main():
 
     # Parse command line arguments.
     cl_args = parse_command_line()
+
+    # Configure root Logger.
+    configure_logging(cl_args)
 
     # Get configuration options.
     try:
@@ -73,15 +77,15 @@ def main():
 
     if not configuration:
         msg = 'Critical error: the configuration file could not be found. '
-        msg += '{} will now exit.'.format(PROGRAM_NAME)
+        msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
         user_interface.show_error(msg)
-        sys.exit(ExitCode.config_file_not_found)
+        sys.exit(consts.ExitCode.config_file_not_found)
     
     # Enter main event loop.
     while True:
         # Decide whether to analyze a stock, add a new entry to the database, 
         # or construct a new valuation model.
-        if user_interface.main_operation == MainOperation.construct_model:
+        if user_interface.main_operation == consts.MainOperation.construct_model:
             raise NotImplementedError('`construct_model` operation not yet implemented.')
 
             # Connect to database.
@@ -113,19 +117,44 @@ def main():
             # Show results to user.
             user_interface.show_test_results(test_results)
             
-        elif user_interface.main_operation == MainOperation.add_database_entry:
+        elif user_interface.main_operation == consts.MainOperation.add_database_entry:
             raise NotImplementedError('`add_database_entry` operation not yet implemented.')
             
-        elif user_interface.main_operation == MainOperation.analyze_stock:
+        elif user_interface.main_operation == consts.MainOperation.analyze_stock:
             raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
-        elif user_interface.main_operation == MainOperation.exit:
-            sys.exit(0)
+        elif user_interface.main_operation == consts.MainOperation.exit:
+            sys.exit(consts.ExitCode.success)
             
         else:
             # Invalid selection.
             msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
             raise SelectionError(msg)
+
+
+def configure_logging(cl_args):
+    """
+    Configure root Logger for Infinium.
+
+    Args
+      cl_args: A namespace created by ``argparse``.
+
+    Returns
+      None
+
+    """
+
+    # Configure logger.
+    log_dir = getenv(consts.LOG_VAR, consts.DEFAULT_LOG_PATH)
+    log_path = str(log_dir / consts.LOG_FILE_NAME)
+    log_level = logging.DEBUG if cl_args.debug else logging.INFO
+    logging.basicConfig(filename=log_path, level=log_level)
+
+    if cl_args.verbose:
+        root = logging.getLogger()
+        stream_handler = logging.StreamHandler(sys.stderr)
+        stream_handler.setLevel(log_level)
+        root.addHandler(stream_handler)
 
 
 if __name__ == '__main__':

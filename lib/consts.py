@@ -90,6 +90,15 @@ INSTALL_VAR = 'INFINIUM_INSTALL'
 # Default installation location.
 DEFAULT_INSTALL_PATH = Path('/usr/lib/infinium')
 
+# Name of log file path environment variable.
+LOG_VAR = 'INFINIUM_LOG'
+
+# Default log file location.
+DEFAULT_LOG_PATH = Path('.')
+
+# Log file name.
+LOG_FILE_NAME = Path('infinium.log')
+
 
 class ExitCode(Enum):
     """

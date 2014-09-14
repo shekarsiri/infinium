@@ -32,7 +32,7 @@ import argparse
 import sys
 
 # Infinium library imports.
-from lib.ui.base import MainOperation
+from lib.ui.base import MainOperation, STR_TO_MAIN_OPERATION, STR_TO_DATABASE_TYPE
 from lib.ui.cli import CommandLineInterface
 
 
@@ -124,6 +124,10 @@ def parse_command_line():
 
     """
 
+    class MainOperationAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, STR_TO_MAIN_OPERATION[values])
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose',
                         help='Launch {} in verbose mode. Redirect logging to stdout.'.format(PROGRAM_NAME),
@@ -139,6 +143,13 @@ def parse_command_line():
                         help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
                         action='store_true',
                         dest='graphical')
+
+    parser.add_argument('-m', '--main-operation',
+                        help='What operation should {} perform?'.format(PROGRAM_NAME),
+                        choices=STR_TO_MAIN_OPERATION,
+                        dest='main_operation',
+                        default=None,
+                        action=MainOperationAction)
 
     cl_args = parser.parse_args()
 

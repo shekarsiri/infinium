@@ -76,7 +76,7 @@ def main():
         user_interface = CommandLineInterface(cl_args, configuration)
 
     if not configuration:
-        msg = 'Critical error: the configuration file could not be found. '
+        msg = 'Critical Error: the configuration file could not be found. '
         msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
         user_interface.show_error(msg)
         sys.exit(consts.ExitCode.config_file_not_found)
@@ -144,17 +144,22 @@ def configure_logging(cl_args):
 
     """
 
-    # Configure logger.
     log_dir = getenv(consts.LOG_VAR, consts.DEFAULT_LOG_PATH)
     log_path = str(log_dir / consts.LOG_FILE_NAME)
     log_level = logging.DEBUG if cl_args.debug else logging.INFO
-    logging.basicConfig(filename=log_path, level=log_level)
+    formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s',
+                                  datefmt='%m/%d/%Y %I:%M:%S %p')
 
+    root = logging.getLogger()
+    file_handler = logging.FileHandler(log_path)
+    file_handler.setLevel(log_level)
+    file_handler.setFormatter(formatter)
+    root.addHandler(file_handler)
     if cl_args.verbose:
-        root = logging.getLogger()
-        stream_handler = logging.StreamHandler(sys.stderr)
-        stream_handler.setLevel(log_level)
-        root.addHandler(stream_handler)
+        stderr_handler = logging.StreamHandler(sys.stderr)
+        stderr_handler.setLevel(log_level)
+        stderr_handler.setFormatter(formatter)
+        root.addHandler(stderr_handler)
 
 
 if __name__ == '__main__':

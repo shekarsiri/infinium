@@ -21,7 +21,10 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Infinium library imports.
+import argparse
+from lib.consts import PROGRAM_NAME
 from lib.ui import base
+from lib.ui.base import STR_TO_MAIN_OPERATION
 from lib.ui.config import configuration
 
 
@@ -48,3 +51,44 @@ class CommandLineInterface(base.UserInterface):
 
     def show_test_results(self):
         raise NotImplementedError('`show_test_results` not yet implemented!')
+
+
+def parse_command_line():
+    """
+    Parse command line arguments to Infinium.
+
+    Return
+      An instance of ``argparse.Namespace``.
+
+    """
+
+    class MainOperationAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, STR_TO_MAIN_OPERATION[values])
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-v', '--verbose',
+                        help='Launch {} in verbose mode. Redirect logging to stdout.'.format(PROGRAM_NAME),
+                        action='store_true',
+                        dest='verbose')
+
+    parser.add_argument('-d', '--debug',
+                        help='Launch {} in debug mode. Log debug information.'.format(PROGRAM_NAME),
+                        action='store_true',
+                        dest='debug')
+
+    parser.add_argument('-g', '--graphical',
+                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
+                        action='store_true',
+                        dest='graphical')
+
+    parser.add_argument('-m', '--main-operation',
+                        help='What operation should {} perform?'.format(PROGRAM_NAME),
+                        choices=STR_TO_MAIN_OPERATION,
+                        dest='main_operation',
+                        default=None,
+                        action=MainOperationAction)
+
+    cl_args = parser.parse_args()
+
+    return cl_args

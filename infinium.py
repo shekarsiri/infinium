@@ -28,17 +28,12 @@ __contact__ = 'jerradgenson@neomailbox.ch'
 
 
 # Python standard library imports.
-import argparse
 import sys
 
 # Infinium library imports.
-from lib.ui.base import MainOperation, STR_TO_MAIN_OPERATION, STR_TO_DATABASE_TYPE
-from lib.ui.cli import CommandLineInterface
+from lib.ui.base import MainOperation
+from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import configuration
-
-
-# Module constants.
-PROGRAM_NAME = 'Infinium'
 
 
 def main():
@@ -114,51 +109,6 @@ def main():
             # Invalid selection.
             msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
             raise SelectionError(msg)
-
-
-def parse_command_line():
-    """
-    Parse command line arguments to Infinium.
-
-    Return
-      An instance of ``argparse.Namespace``.
-
-    """
-
-    class MainOperationAction(argparse.Action):
-        def __call__(self, parser, namespace, values, option_string=None):
-            setattr(namespace, self.dest, STR_TO_MAIN_OPERATION[values])
-
-    class DatabaseTypeAction(argparse.Action):
-        def __call__(self, parser, namespace, values, option_string=None):
-            setattr(namespace, self.dest, STR_TO_DATABASE_TYPE[values])
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-v', '--verbose',
-                        help='Launch {} in verbose mode. Redirect logging to stdout.'.format(PROGRAM_NAME),
-                        action='store_true',
-                        dest='verbose')
-
-    parser.add_argument('-d', '--debug',
-                        help='Launch {} in debug mode. Log debug information.'.format(PROGRAM_NAME),
-                        action='store_true',
-                        dest='debug')
-
-    parser.add_argument('-g', '--graphical',
-                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
-                        action='store_true',
-                        dest='graphical')
-
-    parser.add_argument('-m', '--main-operation',
-                        help='What operation should {} perform?'.format(PROGRAM_NAME),
-                        choices=STR_TO_MAIN_OPERATION,
-                        dest='main_operation',
-                        default=None,
-                        action=MainOperationAction)
-
-    cl_args = parser.parse_args()
-
-    return cl_args
 
 
 class SelectionError(Exception):

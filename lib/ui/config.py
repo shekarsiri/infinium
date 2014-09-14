@@ -1,6 +1,6 @@
 """
 An API for interfacing with the Infinium configuration file. The only public
-component is ``configuration``, an object used to access and mutate config file
+component is ``configuration``, an object used to access and update config file
 fields. There is only one ``configuration`` object, because it is meant to be
 shared between all parts of the program to keep configuration options in sync.
 Not currently thread or process safe.
@@ -48,35 +48,72 @@ from lib.ui.base import MainOperation, DatabaseType
 
 class _Configuration:
     __FILE_NAME = '.infinium.yml'
-    __MAIN_OPERATION_MAP = {'construct model': MainOperation.construct_model,
-                            'add database entry': MainOperation.add_database_entry,
-                            'analyze stock': MainOperation.analyze_stock}
+    __STR_TO_MAIN_OPERATION = {'construct model': MainOperation.construct_model,
+                               'add database entry': MainOperation.add_database_entry,
+                               'analyze stock': MainOperation.analyze_stock}
 
-    __DATABASE_TYPE_MAP = {'yml': DatabaseType.yml}
+    __MAIN_OPERATION_TO_STR = {value: key for key, value in __STR_TO_MAIN_OPERATION.items()}
+    __STR_TO_DATABASE_TYPE = {'yml': DatabaseType.yml}
+    __DATABASE_TYPE_TO_STR = {value: key for key, value in __STR_TO_DATABASE_TYPE.items()}
+
 
     def __init__(self):
         with open(self.__FILE_NAME) as config_file:
             self.__configuration = load(config_file, Loader)
 
-    @property
-    def main_operation(self):
-        return self.__MAIN_OPERATION_MAP[self.__configuration['main_operation'].lower()]
+    def __update_field(self, field, new_value):
+        old_value = self.__configuration[field]
+        self.__configuration[field] = new_value
+        try:
+            with open(self.__FILE_NAME, 'w') as config_file:
+                dump(self.__configuration,
+                     config_file,
+                     Dumper=Dumper,
+                     default_flow_style=False)
+
+        except Exception:
+            self.__configuration[field] = old_value
+            raise
 
     @property
-    def stock_key(self):
-        return self.__configuration['stock_key']
+    def main_operation(self):
+        return self.__STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+
+    @main_operation.setter
+    def main_operation(self, value):
+        self.__update_field('main_operation', self.__MAIN_OPERATION_TO_STR[value])
+
+    @property
+    def stock_name(self):
+        return self.__configuration['stock_name']
+
+    @stock_name.setter
+    def stock_name(self, value):
+        self.__update_field('stock_name', str(value))
 
     @property
     def database_type(self):
-        return self.__DATABASE_TYPE_MAP[self.__configuration['database_type'].lower()]
+        return self.__STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+
+    @database_type.setter
+    def database_type(self, value):
+        self.__update_field('database_type', self.__DATABASE_TYPE_TO_STR[value])
 
     @property
     def database_path(self):
         return Path(self.__configuration['database_path'])
 
+    @database_path.setter
+    def database_path(self, value):
+        self.__update_field('database_path', str(value))
+
     @property
     def model_path(self):
         return Path(self.__configuration['model_path'])
+
+    @model_path.setter
+    def model_path(self, value):
+        self.__update_field('model_path', str(value))
 
 
 configuration = _Configuration()

@@ -46,7 +46,7 @@ class DatabaseType(Enum):
     Defines supported database types.
     """
 
-    yaml = 1
+    yml = 1
 
 
 class UserInterface(metaclass=ABCMeta):

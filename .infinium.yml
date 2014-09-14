@@ -1,0 +1,16 @@
+# The main operation for Infinium to perform on this run. Must be one of
+# `analyze stock`, `add database entry`, or `construct model`.
+main_operation: analyze stock
+
+# The name of the stock to analyze (e.g. GOOG).
+# Required when `main_operation` is `analyze stock`.
+stock_name: None
+
+# Type of database to connect with. Currently only supports `yml`. 
+database_type: yml
+
+# Path to the database if it is accessed as a file.
+database_path: data/stock_data.yml
+
+# Path to a saved valuation model file.
+model_path: data/valuation_model.yml

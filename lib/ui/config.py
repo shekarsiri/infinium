@@ -1,5 +1,12 @@
 """
-Functions for interfacing with the Infinium configuration file.
+An API for interfacing with the Infinium configuration file. The only public
+component is ``configuration``, an object used to access and mutate config file
+fields. There is only one ``configuration`` object, because it is meant to be
+shared between all parts of the program to keep configuration options in sync.
+Not currently thread or process safe.
+
+Upon import, this module may raise any exception that ``open`` and ``yaml.load``
+may raise.
 
 Copyright 2014 Jerrad M. Genson
 
@@ -25,7 +32,7 @@ __contact__ = 'jerradgenson@neomailbox.ch'
 
 
 # Python standard library imports.
-from enum import Enum
+from pathlib import Path
 
 # Third-party library imports.
 from yaml import load, dump
@@ -35,26 +42,41 @@ try:
 except ImportError:
     from yaml import Loader, Dumper
 
+# Infinium library imports.
+from lib.ui.base import EndGoal, DatabaseType
+
 
 class _Configuration:
+    __FILE_NAME = '.infinium.yml'
+    __END_GOAL_MAP = {'construct model': EndGoal.construct_model,
+                      'add database entry': EndGoal.add_database_entry,
+                      'analyze stock': EndGoal.analyze_stock}
+
+    __DATABASE_TYPE_MAP = {'yml': DatabaseType.yml}
+
     def __init__(self):
-        pass
+        with open(self.__FILE_NAME) as config_file:
+            self.__configuration = load(config_file, Loader)
 
     @property
     def end_goal(self):
-        pass
+        return self.__END_GOAL_MAP[self.__configuration['end_goal'].lower()]
+
+    @property
+    def stock_key(self):
+        return self.__configuration['stock_key']
 
     @property
     def database_type(self):
-        pass
+        return self.__DATABASE_TYPE_MAP[self.__configuration['database_type'].lower()]
 
     @property
-    def database_location(self):
-        pass
+    def database_path(self):
+        return Path(self.__configuration['database_path'])
 
     @property
     def model_path(self):
-        pass
+        return Path(self.__configuration['model_path'])
 
 
 configuration = _Configuration()

@@ -3,7 +3,7 @@ An API for interfacing with the Infinium configuration file. The only public
 component is ``configuration``, an object used to access and update config file
 fields. There is only one ``configuration`` object, because it is meant to be
 shared between all parts of the program to keep configuration options in sync.
-Not currently thread or process safe.
+The ``configuration`` object is thread safe.
 
 Upon import, this module may raise any exception that ``open`` and ``yaml.load``
 may raise.
@@ -32,6 +32,7 @@ __contact__ = 'jerradgenson@neomailbox.ch'
 
 
 # Python standard library imports.
+import threading
 from pathlib import Path
 
 # Third-party library imports.
@@ -58,10 +59,12 @@ class _Configuration:
 
 
     def __init__(self):
+        self.__thread_lock = threading.Lock()
         with open(self.__FILE_NAME) as config_file:
             self.__configuration = load(config_file, Loader)
 
     def __update_field(self, field, new_value):
+        self.__thread_lock.acquire()
         old_value = self.__configuration[field]
         self.__configuration[field] = new_value
         try:
@@ -75,9 +78,15 @@ class _Configuration:
             self.__configuration[field] = old_value
             raise
 
+        finally:
+            self.__thread_lock.release()
+
     @property
     def main_operation(self):
-        return self.__STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+        self.__thread_lock.acquire()
+        value = self.__STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+        self.__thread_lock.release()
+        return value
 
     @main_operation.setter
     def main_operation(self, value):
@@ -85,7 +94,10 @@ class _Configuration:
 
     @property
     def stock_name(self):
-        return self.__configuration['stock_name']
+        self.__thread_lock.acquire()
+        value = self.__configuration['stock_name']
+        self.__thread_lock.release()
+        return value
 
     @stock_name.setter
     def stock_name(self, value):
@@ -93,7 +105,10 @@ class _Configuration:
 
     @property
     def database_type(self):
-        return self.__STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+        self.__thread_lock.acquire()
+        value = self.__STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+        self.__thread_lock.release()
+        return value
 
     @database_type.setter
     def database_type(self, value):
@@ -101,7 +116,10 @@ class _Configuration:
 
     @property
     def database_path(self):
-        return Path(self.__configuration['database_path'])
+        self.__thread_lock.acquire()
+        value = Path(self.__configuration['database_path'])
+        self.__thread_lock.release()
+        return value
 
     @database_path.setter
     def database_path(self, value):
@@ -109,7 +127,10 @@ class _Configuration:
 
     @property
     def model_path(self):
-        return Path(self.__configuration['model_path'])
+        self.__thread_lock.acquire()
+        value = Path(self.__configuration['model_path'])
+        self.__thread_lock.release()
+        return value
 
     @model_path.setter
     def model_path(self, value):

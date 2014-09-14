@@ -1,6 +1,6 @@
 # The main operation for Infinium to perform on this run. Must be one of
 # `analyze_stock`, `add_data`, or `construct_model`.
-main_operation: analyze_stock
+main_operati: analyze_stock
 
 # The name of the stock to analyze (e.g. GOOG).
 # Required when `main_operation` is `analyze stock`.

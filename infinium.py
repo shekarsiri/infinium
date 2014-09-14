@@ -62,9 +62,11 @@ def main():
     try:
         configuration = get_config()
 
-    except ConfigFileNotFoundError as config_file_not_found_error:
+    except (ConfigFileNotFoundError, OSError) as error:
         configuration = None
-        logging.critical(config_file_not_found_error)
+        logging.critical(error)
+        err_msg = 'Critical Error: the configuration file could not be found. '
+        err_msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
 
     # Launch user interface.
     if cl_args.graphical:
@@ -76,9 +78,7 @@ def main():
         user_interface = CommandLineInterface(cl_args, configuration)
 
     if not configuration:
-        msg = 'Critical Error: the configuration file could not be found. '
-        msg += '{} will now exit.'.format(consts.PROGRAM_NAME)
-        user_interface.show_error(msg)
+        user_interface.show_error(err_msg)
         sys.exit(consts.ExitCode.config_file_not_found)
     
     # Enter main event loop.
@@ -128,8 +128,8 @@ def main():
             
         else:
             # Invalid selection.
-            msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
-            raise SelectionError(msg)
+            err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
+            raise SelectionError(err_msg)
 
 
 def configure_logging(cl_args):

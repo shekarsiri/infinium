@@ -69,6 +69,8 @@ def main():
         # Decide whether to analyze a stock, add a new entry to the database, 
         # or construct a new valuation model.
         if user_interface.main_operation == MainOperation.construct_model:
+            raise NotImplementedError('`construct_model` operation not yet implemented.')
+
             # Connect to database.
             database = connect_database(user_interface.database_type,
                                         user_interface.database_path)
@@ -99,10 +101,10 @@ def main():
             user_interface.show_test_results(test_results)
             
         elif user_interface.main_operation == MainOperation.add_database_entry:
-            pass
+            raise NotImplementedError('`add_database_entry` operation not yet implemented.')
             
         elif user_interface.main_operation == MainOperation.analyze_stock:
-            pass
+            raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
         elif user_interface.main_operation == MainOperation.exit:
             sys.exit(0)

@@ -111,7 +111,7 @@ def main():
             
         else:
             # Invalid selection.
-            msg = "'main_operation' attribute not defined by 'ui.EndGoal'."
+            msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
             raise SelectionError(msg)
 
 

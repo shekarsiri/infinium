@@ -38,8 +38,8 @@ class CommandLineInterface(base.UserInterface):
     def __init__(self, cl_args):
         self.__cl_args = cl_args
 
-    def end_goal(self):
-        return self.__cl_args.end_goal or configuration.end_goal
+    def main_operation(self):
+        return self.__cl_args.main_operation or configuration.main_operation
 
     def database_type(self):
         return self.__cl_args.database_type or configuration.database_type

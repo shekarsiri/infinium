@@ -32,7 +32,7 @@ import argparse
 import sys
 
 # Infinium library imports.
-from lib.ui.base import EndGoal
+from lib.ui.base import MainOperation
 from lib.ui.cli import CommandLineInterface
 
 
@@ -68,7 +68,7 @@ def main():
     while True:
         # Decide whether to analyze a stock, add a new entry to the database, 
         # or construct a new valuation model.
-        if user_interface.end_goal == EndGoal.construct_model:
+        if user_interface.main_operation == MainOperation.construct_model:
             # Connect to database.
             database = connect_database(user_interface.database_type,
                                         user_interface.database_location)
@@ -98,18 +98,18 @@ def main():
             # Show results to user.
             user_interface.show_test_results(test_results)
             
-        elif user_interface.end_goal == EndGoal.add_database_entry:
+        elif user_interface.main_operation == MainOperation.add_database_entry:
             pass
             
-        elif user_interface.end_goal == EndGoal.analyze_stock:
+        elif user_interface.main_operation == MainOperation.analyze_stock:
             pass
 
-        elif user_interface.end_goal == EndGoal.exit:
+        elif user_interface.main_operation == MainOperation.exit:
             sys.exit(0)
             
         else:
             # Invalid selection.
-            msg = "'end_goal' attribute not defined by 'ui.EndGoal'."
+            msg = "'main_operation' attribute not defined by 'ui.EndGoal'."
             raise SelectionError(msg)
 
 

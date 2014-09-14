@@ -43,14 +43,14 @@ except ImportError:
     from yaml import Loader, Dumper
 
 # Infinium library imports.
-from lib.ui.base import EndGoal, DatabaseType
+from lib.ui.base import MainOperation, DatabaseType
 
 
 class _Configuration:
     __FILE_NAME = '.infinium.yml'
-    __END_GOAL_MAP = {'construct model': EndGoal.construct_model,
-                      'add database entry': EndGoal.add_database_entry,
-                      'analyze stock': EndGoal.analyze_stock}
+    __MAIN_OPERATION_MAP = {'construct model': MainOperation.construct_model,
+                            'add database entry': MainOperation.add_database_entry,
+                            'analyze stock': MainOperation.analyze_stock}
 
     __DATABASE_TYPE_MAP = {'yml': DatabaseType.yml}
 
@@ -59,8 +59,8 @@ class _Configuration:
             self.__configuration = load(config_file, Loader)
 
     @property
-    def end_goal(self):
-        return self.__END_GOAL_MAP[self.__configuration['end_goal'].lower()]
+    def main_operation(self):
+        return self.__MAIN_OPERATION_MAP[self.__configuration['main_operation'].lower()]
 
     @property
     def stock_key(self):

@@ -30,7 +30,7 @@ from enum import Enum
 from abc import ABCMeta, abstractproperty, abstractmethod
 
 
-class EndGoal(Enum):
+class MainOperation(Enum):
     """
     Defines end goals the user can achieve by running Infinium.
     """
@@ -60,10 +60,10 @@ class UserInterface(metaclass=ABCMeta):
     """
 
     @abstractproperty
-    def end_goal(self):
+    def main_operation(self):
         """
         The end goal of this iteration of the main event loop.
-        Must be a value defined by ``EndGoal``.
+        Must be a value defined by ``MainOperation``.
         """
 
         pass
@@ -80,9 +80,7 @@ class UserInterface(metaclass=ABCMeta):
     @abstractproperty
     def database_location(self):
         """
-        The location of the database to connect with.
-        Depending on the database type, this must be either a ``Path`` object
-        or a ``DatabaseCredentials`` object.
+        The location of the database to connect with as a Path object.
         """
 
         pass

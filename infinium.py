@@ -128,6 +128,10 @@ def parse_command_line():
         def __call__(self, parser, namespace, values, option_string=None):
             setattr(namespace, self.dest, STR_TO_MAIN_OPERATION[values])
 
+    class DatabaseTypeAction(argparse.Action):
+        def __call__(self, parser, namespace, values, option_string=None):
+            setattr(namespace, self.dest, STR_TO_DATABASE_TYPE[values])
+
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose',
                         help='Launch {} in verbose mode. Redirect logging to stdout.'.format(PROGRAM_NAME),
@@ -150,6 +154,13 @@ def parse_command_line():
                         dest='main_operation',
                         default=None,
                         action=MainOperationAction)
+
+    parser.add_argument('--database-type',
+                        help='Stock data is stored in this type of database.',
+                        choices=STR_TO_DATABASE_TYPE,
+                        dest='database_type',
+                        default=None,
+                        action=DatabaseTypeAction)
 
     cl_args = parser.parse_args()
 

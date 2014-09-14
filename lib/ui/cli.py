@@ -84,10 +84,11 @@ def parse_command_line():
                         action='store_true',
                         dest='debug')
 
-    parser.add_argument('-g', '--graphical',
-                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
-                        action='store_true',
-                        dest='graphical')
+# Uncomment when GUI is ready to be used.
+#    parser.add_argument('-g', '--graphical',
+#                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
+#                        action='store_true',
+#                        dest='graphical')
 
     parser.add_argument('-m', '--main-operation',
                         help='What operation should {} perform?'.format(PROGRAM_NAME),

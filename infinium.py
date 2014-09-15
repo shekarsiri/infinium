@@ -170,6 +170,7 @@ def launch_user_interface(cl_args, configuration):
 
     Returns
       An instance of ``lib.ui.base.UserInterface``.
+
     """
 
     # Launch user interface.
@@ -183,6 +184,24 @@ def launch_user_interface(cl_args, configuration):
 
     return user_interface
 
+
+def connect_database(configuration):
+    """
+    Decide which database to use and connect to it.
+
+    Args
+      configuration: The configuration object from ``lib.ui.config``.
+
+    Returns
+      An instance of ``lib.db.base.Database``.
+
+    """
+
+    if configuration.database_type == consts.DatabaseType.yml:
+        # Connect to YAML database.
+        database = YamlDatabase(configuration.database_path)
+
+    return database
 
 
 if __name__ == '__main__':

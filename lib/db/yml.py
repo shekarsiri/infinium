@@ -47,6 +47,6 @@ class YamlDatabase:
     """
 
     def __init__(self, database_path):
-        self.__database_path = database_pathn
+        self.__database_path = database_path
         with database_path.open() as database_file:
             self.__stock_database = load(database_file, Loader)

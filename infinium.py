@@ -67,14 +67,7 @@ def main():
         logging.critical(error)
         err_msg = str(error)
 
-    # Launch user interface.
-    if cl_args.graphical:
-        # Use graphical user interface.
-        raise NotImplementedError('GUI under construction. Please use CLI.')
-
-    else:
-        # Use command line interface.
-        user_interface = CommandLineInterface(cl_args, configuration)
+    user_interface = launch_user_interface(cl_args, configuration)
 
     if not configuration:
         user_interface.show_error(err_msg)
@@ -165,6 +158,31 @@ def configure_logging(cl_args):
         stderr_handler.setLevel(log_level)
         stderr_handler.setFormatter(formatter)
         root.addHandler(stderr_handler)
+
+
+def launch_user_interface(cl_args, configuration):
+    """
+    Decide which UI to use and launch it.
+
+    Args
+      cl_args: A ``namespace`` object created by ``argparse``.
+      configuration: The configuration object from ``lib.ui.config``.
+
+    Returns
+      An instance of ``lib.ui.base.UserInterface``.
+    """
+
+    # Launch user interface.
+    if cl_args.graphical:
+        # Use graphical user interface.
+        raise NotImplementedError('GUI under construction. Please use CLI.')
+
+    else:
+        # Use command line interface.
+        user_interface = CommandLineInterface(cl_args, configuration)
+
+    return user_interface
+
 
 
 if __name__ == '__main__':

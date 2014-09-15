@@ -84,7 +84,7 @@ def parse_command_line():
                         action='store_true',
                         dest='debug')
 
-# Uncomment when GUI is ready to be used.
+# TODO: Uncomment when GUI is ready to be used.
 #    parser.add_argument('-g', '--graphical',
 #                        help='Launch {} with GUI. Note: currently not functional.'.format(PROGRAM_NAME),
 #                        action='store_true',
@@ -98,5 +98,8 @@ def parse_command_line():
                         action=MainOperationAction)
 
     cl_args = parser.parse_args()
+
+    # TODO: Remove when GUI is ready to be used
+    setattr(cl_args, 'graphical', False)
 
     return cl_args

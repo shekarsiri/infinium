@@ -197,9 +197,9 @@ def connect_database(configuration):
 
     """
 
-    if configuration.database_type == consts.DatabaseType.yml:
-        # Connect to YAML database.
-        database = YamlDatabase(configuration.database_path)
+    if configuration.database_type == consts.DatabaseType.pgsql:
+        # Connect to PostgreSQL database.
+        database = PostgresDatabase(configuration.database_path)
 
     return database
 

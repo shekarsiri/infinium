@@ -66,10 +66,10 @@ class DatabaseType(Enum):
     Defines supported database types.
     """
 
-    yml = 1
+    pgsql = 1
 
 # Maps strings to DatabaseType values.
-STR_TO_DATABASE_TYPE = {'yml': DatabaseType.yml}
+STR_TO_DATABASE_TYPE = {'pgsql': DatabaseType.pgsql}
 
 # Maps DatabaseType values to strings.
 DATABASE_TYPE_TO_STR = {value: key for key, value in STR_TO_DATABASE_TYPE.items()}

@@ -7,7 +7,7 @@ main_operation: analyze_stock
 stock_name: None
 
 # Type of database to connect with. Currently only supports `yml`. 
-database_type: yml
+database_type: pgsql
 
 # Path to the database if it is accessed as a file.
 database_path: data/stock_data.yml

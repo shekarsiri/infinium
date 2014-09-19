@@ -78,45 +78,19 @@ def main():
         # Decide whether to analyze a stock, add a new entry to the database, 
         # or construct a new valuation model.
         try:
-            if user_interface.main_operation == consts.MainOperation.construct_model:
-                raise NotImplementedError('`construct_model` operation not yet implemented.')
+            if user_interface.construct_model:
+                model = construct_model()
 
-                # Connect to database.
-                database = connect_database(configuration.database_type,
-                                            configuration.database_path)
+            elif user_interface.load_model:
+                model = load_model()
 
-                # Extract testing set from data.
-                testing_data = extract_testing_data(database)
-
-                if user_interface.load_model:
-                    # Load valuation model from disk.
-                    valuation_model = load_valuation_model(user_interface.model_path)
-
-                else:
-                    # Extract training set from data.
-                    training_data = extract_training_data(database)
-
-                    # Decide which classifier to use.
-
-                    # Construct the valuation model from training data.
-                    valuation_model = construct_valuation_model(training_data, classifier)
-
-                    # Save valuation model to disk.
-                    save_valuation_model(model_path)
-
-                # Use testing data to evaluate quality of model.
-                test_results = evaluate_model(valuation_model, testing_data)
-
-                # Show results to user.
-                user_interface.show_test_results(test_results)
-
-            elif user_interface.main_operation == consts.MainOperation.add_database_entry:
+            elif user_interface.add_database_entry:
                 raise NotImplementedError('`add_database_entry` operation not yet implemented.')
 
-            elif user_interface.main_operation == consts.MainOperation.analyze_stock:
+            elif user_interface.analyze_stock:
                 raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
-            elif user_interface.main_operation == consts.MainOperation.exit:
+            elif user_interface.exit:
                 sys.exit(consts.ExitCode.success)
 
             else:
@@ -202,6 +176,26 @@ def connect_database(configuration):
         database = PostgresDatabase(configuration.database_path)
 
     return database
+
+
+def evaluate_model(valuation_model, testing_data):
+    raise NotImplementedError('`evaluate_model` operation not yet implemented.')
+
+
+def extract_training_data(database):
+    raise NotImplementedError('`extract_training_data` operation not yet implemented.')
+
+
+def save_model(valuation_model, path):
+    raise NotImplementedError('`save_valuation_model` operation not yet implemented.')
+
+
+def load_model(path):
+    raise NotImplementedError('`load_valuation_model` operation not yet implemented.')
+
+
+def construct_model(training_data, classifier):
+    raise NotImplementedError('`construct_model` operation not yet implemented.')
 
 
 if __name__ == '__main__':

@@ -8,7 +8,7 @@ keep configuration options in sync.
 The name of the configuration file is '{}'. The configuration loader first
 searches for it in the current working directory, then in the location
 specified by the '{}' environment variable, and finally in the root of the
-Infinium installation directory, specified by the '{}' environment variable.
+Infinium installation directory, extracted from argv[0].
 
 This module is thread safe.
 
@@ -53,7 +53,7 @@ __maintainer__ = consts.Developer.JERRAD_GENSON
 __contact__ = consts.Developer.EMAIL[__maintainer__]
 __doc__ = __doc__.format(consts.CONFIG_FILE_NAME,
                          consts.CONFIG_VAR,
-                         consts.INSTALL_VAR)
+                         consts.INSTALL_PATH)
 
 
 # Global module variables used to keep configuration file in sync.
@@ -115,10 +115,9 @@ class _Configuration:
     def __init__(self):
         cwd_config_path = Path(consts.CONFIG_FILE_NAME)
         environ_config_path = Path(getenv(consts.CONFIG_VAR,
-                                          consts.DEFAULT_CONFIG_PATH)) / Path(consts.CONFIG_FILE_NAME)
+                                          consts.DEFAULT_CONFIG_PATH)) / consts.CONFIG_FILE_NAME
 
-        install_config_path = Path(getenv(consts.INSTALL_VAR,
-                                          consts.DEFAULT_INSTALL_PATH)) / Path(consts.CONFIG_FILE_NAME)
+        install_config_path = consts.INSTALL_PATH / consts.CONFIG_FILE_NAME
 
         # First look for config file in current working directory.
         if cwd_config_path.exists():

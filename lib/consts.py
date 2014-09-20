@@ -21,6 +21,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Python standard library imports.
+from sys import argv
 from enum import Enum
 from pathlib import Path
 
@@ -65,11 +66,8 @@ CONFIG_VAR = 'INFINIUM_CONFIG'
 # Default config file location.
 DEFAULT_CONFIG_PATH = Path('~/')
 
-# Name of installation directory environment variable.
-INSTALL_VAR = 'INFINIUM_INSTALL'
-
-# Default installation location.
-DEFAULT_INSTALL_PATH = Path('/usr/lib/infinium')
+# Installation location.
+INSTALL_PATH = Path(argv[0]).parent
 
 # Name of log file path environment variable.
 LOG_VAR = 'INFINIUM_LOG'

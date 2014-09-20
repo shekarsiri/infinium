@@ -42,7 +42,8 @@ __contact__ = consts.Developer.EMAIL[__maintainer__]
 
 def main():
     """
-    Start Infinium's user interface and main event loop.
+    Parse command line, read configuration file, and launch Infinium's user
+    interface.
 
     Return
       None
@@ -63,45 +64,48 @@ def main():
         configuration = get_config()
 
     except (ConfigurationError, OSError) as error:
-        configuration = None
         logging.critical(error)
-        err_msg = str(error)
-
-    user_interface = launch_user_interface(cl_args, configuration)
-
-    if not configuration:
-        user_interface.show_error(err_msg)
+        print(error)
         sys.exit(consts.ExitCode.config_file_not_found)
-    
-    # Enter main event loop.
-    while True:
-        # Decide whether to analyze a stock, add a new entry to the database, 
-        # or construct a new valuation model.
-        try:
-            if user_interface.construct_model:
-                model = construct_model()
 
-            elif user_interface.load_model:
-                model = load_model()
+    # Launch user interface.
+    if cl_args.graphical:
+        # Use graphical user interface.
+        raise NotImplementedError('GUI under construction. Please use CLI.')
 
-            elif user_interface.add_database_entry:
-                raise NotImplementedError('`add_database_entry` operation not yet implemented.')
+    else:
+        # Use command line interface.
+        user_interface = CommandLineInterface(cl_args, configuration)
 
-            elif user_interface.analyze_stock:
-                raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+        # Enter CLI event loop.
+        while True:
+            # Decide whether to analyze a stock, add a new entry to the database,
+            # or construct a new valuation model.
+            try:
+                if user_interface.construct_model:
+                    construct_model()
 
-            elif user_interface.exit:
-                sys.exit(consts.ExitCode.success)
+                elif user_interface.load_model:
+                    load_model()
 
-            else:
-                # Invalid selection.
-                err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
-                raise SelectionError(err_msg)
+                elif user_interface.add_database_entry:
+                    raise NotImplementedError('`add_database_entry` operation not yet implemented.')
 
-        except ConfigFileCorruptError as error:
-            logging.critical(error)
-            user_interface.show_error(str(error))
-            sys.exit(consts.ExitCode.config_file_corrupt)
+                elif user_interface.analyze_stock:
+                    raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+
+                elif user_interface.exit:
+                    sys.exit(consts.ExitCode.success)
+
+                else:
+                    # Invalid selection.
+                    err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
+                    raise SelectionError(err_msg)
+
+            except ConfigFileCorruptError as error:
+                logging.critical(error)
+                user_interface.show_error(str(error))
+                sys.exit(consts.ExitCode.config_file_corrupt)
 
 
 def configure_logging(cl_args):
@@ -132,31 +136,6 @@ def configure_logging(cl_args):
         stderr_handler.setLevel(log_level)
         stderr_handler.setFormatter(formatter)
         root.addHandler(stderr_handler)
-
-
-def launch_user_interface(cl_args, configuration):
-    """
-    Decide which UI to use and launch it.
-
-    Args
-      cl_args: A ``namespace`` object created by ``argparse``.
-      configuration: The configuration object from ``lib.ui.config``.
-
-    Returns
-      An instance of ``lib.ui.base.UserInterface``.
-
-    """
-
-    # Launch user interface.
-    if cl_args.graphical:
-        # Use graphical user interface.
-        raise NotImplementedError('GUI under construction. Please use CLI.')
-
-    else:
-        # Use command line interface.
-        user_interface = CommandLineInterface(cl_args, configuration)
-
-    return user_interface
 
 
 def connect_database(configuration):

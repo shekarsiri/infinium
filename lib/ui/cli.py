@@ -60,6 +60,45 @@ class CommandLineInterface(base.UserInterface):
         print(message)
 
 
+def launch_cli(cl_args, configuration):
+    """
+    Launch command line interface event loop.
+
+    Args
+      cl_args: Command line arguments from ``parse_command_line``.
+      configuration: Configuration object from ``config.get_config``.
+
+    Return
+      None; does not return. Terminates program upon completion.
+
+    """
+
+    # Enter CLI event loop.
+    while True:
+        # Decide whether to analyze a stock, add a new entry to the database,
+        # or construct a new valuation model.
+        try:
+            if user_interface.construct_model:
+                construct_model()
+
+            elif user_interface.load_model:
+                load_model()
+
+            elif user_interface.add_database_entry:
+                raise NotImplementedError('`add_database_entry` operation not yet implemented.')
+
+            elif user_interface.analyze_stock:
+                raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+
+            elif user_interface.exit:
+                sys.exit(consts.ExitCode.success)
+
+        except ConfigFileCorruptError as error:
+            logging.critical(error)
+            user_interface.show_error(str(error))
+            sys.exit(consts.ExitCode.config_file_corrupt)
+
+
 def parse_command_line():
     """
     Parse command line arguments to Infinium.

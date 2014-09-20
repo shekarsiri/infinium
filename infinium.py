@@ -30,8 +30,8 @@ from os import getenv
 
 # Infinium library imports.
 from lib import consts
-from lib.ui.cli import CommandLineInterface, parse_command_line
-from lib.ui.config import get_config, ConfigurationError, ConfigFileCorruptError
+from lib.ui.cli import parse_command_line, launch_cli
+from lib.ui.config import get_config, ConfigurationError
 
 
 # Module header.
@@ -74,32 +74,7 @@ def main():
 
     else:
         # Use command line interface.
-        user_interface = CommandLineInterface(cl_args, configuration)
-
-        # Enter CLI event loop.
-        while True:
-            # Decide whether to analyze a stock, add a new entry to the database,
-            # or construct a new valuation model.
-            try:
-                if user_interface.construct_model:
-                    construct_model()
-
-                elif user_interface.load_model:
-                    load_model()
-
-                elif user_interface.add_database_entry:
-                    raise NotImplementedError('`add_database_entry` operation not yet implemented.')
-
-                elif user_interface.analyze_stock:
-                    raise NotImplementedError('`analyze_stock` operation not yet implemented.')
-
-                elif user_interface.exit:
-                    sys.exit(consts.ExitCode.success)
-
-            except ConfigFileCorruptError as error:
-                logging.critical(error)
-                user_interface.show_error(str(error))
-                sys.exit(consts.ExitCode.config_file_corrupt)
+        launch_cli(cl_args, configuration)
 
 
 def configure_logging(cl_args):

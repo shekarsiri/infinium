@@ -29,14 +29,14 @@ import logging
 from os import getenv
 
 # Infinium library imports.
-from lib import consts
+from lib import data
 from lib.ui.cli import parse_command_line, launch_cli
 from lib.ui.config import get_config, ConfigurationError
 
 
 # Module header.
-__maintainer__ = consts.Developer.JERRAD_GENSON
-__contact__ = consts.Developer.EMAIL[__maintainer__]
+__maintainer__ = data.Developer.JERRAD_GENSON
+__contact__ = data.Developer.EMAIL[__maintainer__]
 
 
 def main():
@@ -65,7 +65,7 @@ def main():
     except (ConfigurationError, OSError) as error:
         logging.critical(error)
         print(error, sys.stderr)
-        sys.exit(consts.ExitCode.config_file_not_found)
+        sys.exit(data.ExitCode.config_file_not_found)
 
     # Launch user interface.
     if cl_args.graphical:
@@ -89,8 +89,8 @@ def configure_logging(cl_args):
 
     """
 
-    log_dir = getenv(consts.LOG_VAR, consts.DEFAULT_LOG_PATH)
-    log_path = str(log_dir / consts.LOG_FILE_NAME)
+    log_dir = getenv(data.LOG_VAR, data.DEFAULT_LOG_PATH)
+    log_path = str(log_dir / data.LOG_FILE_NAME)
     log_level = logging.DEBUG if cl_args.debug else logging.INFO
     formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s',
                                   datefmt='%m/%d/%Y %I:%M:%S %p')
@@ -119,7 +119,7 @@ def connect_database(configuration):
 
     """
 
-    if configuration.database_type == consts.DatabaseType.pgsql:
+    if configuration.database_type == data.DatabaseType.pgsql:
         # Connect to PostgreSQL database.
         database = PostgresDatabase(configuration.database_path)
 

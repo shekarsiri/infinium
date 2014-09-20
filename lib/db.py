@@ -26,12 +26,12 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.ext.declarative import declarative_base
 
 # Infinium library imports.
-from lib import consts
+from lib import data
 
 
 # Module header.
-__maintainer__ = consts.Developer.JERRAD_GENSON
-__contact__ = consts.Developer.EMAIL[__maintainer__]
+__maintainer__ = data.Developer.JERRAD_GENSON
+__contact__ = data.Developer.EMAIL[__maintainer__]
 
 
 # Module constants.

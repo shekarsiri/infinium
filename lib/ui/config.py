@@ -45,15 +45,15 @@ except ImportError:
     from yaml import Loader, Dumper
 
 # Infinium library imports.
-from lib import consts
+from lib import data
 
 
 # Module header.
-__maintainer__ = consts.Developer.JERRAD_GENSON
-__contact__ = consts.Developer.EMAIL[__maintainer__]
-__doc__ = __doc__.format(consts.CONFIG_FILE_NAME,
-                         consts.CONFIG_VAR,
-                         consts.INSTALL_PATH)
+__maintainer__ = data.Developer.JERRAD_GENSON
+__contact__ = data.Developer.EMAIL[__maintainer__]
+__doc__ = __doc__.format(data.CONFIG_FILE_NAME,
+                         data.CONFIG_VAR,
+                         data.INSTALL_PATH)
 
 
 # Global module variables used to keep configuration file in sync.
@@ -113,15 +113,15 @@ class ConfigFileCorruptError(ConfigurationError):
 
 class _Configuration:
     def __init__(self):
-        cwd_config_path = Path(consts.CONFIG_FILE_NAME)
-        environ_config_path = Path(getenv(consts.CONFIG_VAR,
-                                          consts.DEFAULT_CONFIG_PATH)) / consts.CONFIG_FILE_NAME
+        cwd_config_path = Path(data.CONFIG_FILE_NAME)
+        environ_config_path = Path(getenv(data.CONFIG_VAR,
+                                          data.DEFAULT_CONFIG_PATH)) / data.CONFIG_FILE_NAME
 
-        install_config_path = consts.INSTALL_PATH / consts.CONFIG_FILE_NAME
+        install_config_path = data.INSTALL_PATH / data.CONFIG_FILE_NAME
 
         # First look for config file in current working directory.
         if cwd_config_path.exists():
-            config_path = Path(consts.CONFIG_FILE_NAME)
+            config_path = Path(data.CONFIG_FILE_NAME)
 
         # Next, look for config file at config environment variable.
         elif environ_config_path.exists():
@@ -172,7 +172,7 @@ class _Configuration:
     def main_operation(self):
         _thread_lock.acquire()
         try:
-            value = consts.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
+            value = data.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
 
         except KeyError:
             self.__handle_key_error('main_operation')
@@ -184,7 +184,7 @@ class _Configuration:
 
     @main_operation.setter
     def main_operation(self, value):
-        self.__update_field('main_operation', consts.MAIN_OPERATION_TO_STR[value])
+        self.__update_field('main_operation', data.MAIN_OPERATION_TO_STR[value])
 
     @property
     def stock_name(self):
@@ -208,7 +208,7 @@ class _Configuration:
     def database_type(self):
         _thread_lock.acquire()
         try:
-            value = consts.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
+            value = data.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
 
         except KeyError:
             self.__handle_key_error('database_type')
@@ -220,7 +220,7 @@ class _Configuration:
 
     @database_type.setter
     def database_type(self, value):
-        self.__update_field('database_type', consts.DATABASE_TYPE_TO_STR[value])
+        self.__update_field('database_type', data.DATABASE_TYPE_TO_STR[value])
 
     @property
     def database_path(self):

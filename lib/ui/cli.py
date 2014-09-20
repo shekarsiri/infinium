@@ -26,7 +26,7 @@ from enum import Enum
 
 # Infinium library imports.
 import argparse
-from lib.consts import PROGRAM_NAME, Developer, ExitCode
+from lib.data import PROGRAM_NAME, Developer, ExitCode
 
 
 # Module header.

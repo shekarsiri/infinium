@@ -1,16 +1,5 @@
-# The main operation for Infinium to perform on this run. Must be one of
-# `analyze_stock`, `add_data`, or `construct_model`.
-main_operation: analyze_stock
-
-# The name of the stock to analyze (e.g. GOOG).
-# Required when `main_operation` is `analyze stock`.
-stock_name: None
-
-# Type of database to connect with. Currently only supports `yml`. 
 database_type: pgsql
-
-# Path to the database if it is accessed as a file.
 database_path: data/stock_data.yml
-
-# Path to a saved valuation model file.
 model_path: data/valuation_model.yml
+log_path: .infinium.log
+

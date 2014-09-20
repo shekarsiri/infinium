@@ -69,15 +69,6 @@ DEFAULT_CONFIG_PATH = Path('~/')
 # Installation location.
 INSTALL_PATH = Path(argv[0]).parent
 
-# Name of log file path environment variable.
-LOG_VAR = 'INFINIUM_LOG'
-
-# Default log file location.
-DEFAULT_LOG_PATH = Path('.')
-
-# Log file name.
-LOG_FILE_NAME = Path('infinium.log')
-
 
 class ExitCode(Enum):
     """

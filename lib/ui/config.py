@@ -257,3 +257,21 @@ class _Configuration:
     @model_path.setter
     def model_path(self, value):
         self.__update_field('model_path', str(value))
+
+    @property
+    def log_path(self):
+        _thread_lock.acquire()
+        try:
+            value = Path(self.__configuration['log_path'])
+
+        except KeyError:
+            self.__handle_key_error('log_path')
+
+        finally:
+            _thread_lock.release()
+
+        return value
+
+    @log_path.setter
+    def log_path(self, value):
+        self.__update_field('log_path', str(value))

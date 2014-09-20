@@ -26,7 +26,6 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 # Python standard library imports.
 import sys
 import logging
-from os import getenv
 
 # Infinium library imports.
 from lib import data
@@ -55,17 +54,16 @@ def main():
     # Parse command line arguments.
     cl_args = parse_command_line()
 
-    # Configure root Logger.
-    configure_logging(cl_args)
-
     # Get configuration options.
     try:
         configuration = get_config()
 
     except (ConfigurationError, OSError) as error:
-        logging.critical(error)
         print(error, sys.stderr)
         sys.exit(data.ExitCode.config_file_not_found)
+
+    # Configure root Logger.
+    configure_logging(cl_args, configuration)
 
     # Launch user interface.
     if cl_args.graphical:
@@ -77,7 +75,7 @@ def main():
         launch_cli()
 
 
-def configure_logging(cl_args):
+def configure_logging(cl_args, configuration):
     """
     Configure root Logger for Infinium.
 
@@ -89,14 +87,12 @@ def configure_logging(cl_args):
 
     """
 
-    log_dir = getenv(data.LOG_VAR, data.DEFAULT_LOG_PATH)
-    log_path = str(log_dir / data.LOG_FILE_NAME)
     log_level = logging.DEBUG if cl_args.debug else logging.INFO
     formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s',
                                   datefmt='%m/%d/%Y %I:%M:%S %p')
 
     root = logging.getLogger()
-    file_handler = logging.FileHandler(log_path)
+    file_handler = logging.FileHandler(str(configuration.log_path))
     file_handler.setLevel(log_level)
     file_handler.setFormatter(formatter)
     root.addHandler(file_handler)

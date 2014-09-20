@@ -30,7 +30,6 @@ from os import getenv
 
 # Infinium library imports.
 from lib import consts
-from lib.ui.base import SelectionError
 from lib.ui.cli import CommandLineInterface, parse_command_line
 from lib.ui.config import get_config, ConfigurationError, ConfigFileCorruptError
 
@@ -65,7 +64,7 @@ def main():
 
     except (ConfigurationError, OSError) as error:
         logging.critical(error)
-        print(error)
+        print(error, sys.stderr)
         sys.exit(consts.ExitCode.config_file_not_found)
 
     # Launch user interface.
@@ -96,11 +95,6 @@ def main():
 
                 elif user_interface.exit:
                     sys.exit(consts.ExitCode.success)
-
-                else:
-                    # Invalid selection.
-                    err_msg = '`{}` not defined by `MainOperation`.'.format(user_interface.main_operation)
-                    raise SelectionError(err_msg)
 
             except ConfigFileCorruptError as error:
                 logging.critical(error)

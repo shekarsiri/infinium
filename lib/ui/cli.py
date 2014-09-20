@@ -20,44 +20,18 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+# Python standard library imports.
+import sys
+from enum import Enum
+
 # Infinium library imports.
 import argparse
-from lib.consts import PROGRAM_NAME, STR_TO_MAIN_OPERATION, Developer
-from lib.ui import base
+from lib.consts import PROGRAM_NAME, Developer, ExitCode
 
 
 # Module header.
 __maintainer__ = Developer.JERRAD_GENSON
 __contact__ = Developer.EMAIL[__maintainer__]
-
-
-class CommandLineInterface(base.UserInterface):
-    """
-    User interface for running Infinium from the command line using command
-    line arguments and a configuration file.
-
-    Args
-      cl_args: command line arguments from ``infinium.parse_command_line``.
-
-    """
-
-    def __init__(self, cl_args, configuration):
-        self.__cl_args = cl_args
-        self.__configuration = configuration
-
-    @property
-    def main_operation(self):
-        return self.__cl_args.main_operation or self.__configuration.main_operation
-
-    @property
-    def model_path(self):
-        return self.__cl_args.model_path or self.__configuration.model_path
-
-    def show_test_results(self):
-        raise NotImplementedError('`show_test_results` not yet implemented!')
-
-    def show_error(self, message):
-        print(message)
 
 
 def launch_cli(cl_args, configuration):
@@ -73,30 +47,27 @@ def launch_cli(cl_args, configuration):
 
     """
 
+    user_interface = CommandLineInterface()
     # Enter CLI event loop.
     while True:
         # Decide whether to analyze a stock, add a new entry to the database,
         # or construct a new valuation model.
-        try:
-            if user_interface.construct_model:
-                construct_model()
+        user_interface.main_prompt()
+        if user_interface.main_operation is MainOperation.construct_model:
+            construct_model()
 
-            elif user_interface.load_model:
-                load_model()
+        elif user_interface.main_operation is MainOperation.add_database_entry:
+            raise NotImplementedError('`add_database_entry` operation not yet implemented.')
 
-            elif user_interface.add_database_entry:
-                raise NotImplementedError('`add_database_entry` operation not yet implemented.')
+        elif user_interface.main_operation is MainOperation.analyze_stock:
+            raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
-            elif user_interface.analyze_stock:
-                raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+        elif user_interface.main_operation is MainOperation.exit:
+            sys.exit(ExitCode.success)
 
-            elif user_interface.exit:
-                sys.exit(consts.ExitCode.success)
 
-        except ConfigFileCorruptError as error:
-            logging.critical(error)
-            user_interface.show_error(str(error))
-            sys.exit(consts.ExitCode.config_file_corrupt)
+def construct_model():
+    raise NotImplementedError()
 
 
 def parse_command_line():
@@ -107,10 +78,6 @@ def parse_command_line():
       An instance of ``argparse.Namespace``.
 
     """
-
-    class MainOperationAction(argparse.Action):
-        def __call__(self, parser, namespace, values, option_string=None):
-            setattr(namespace, self.dest, STR_TO_MAIN_OPERATION[values])
 
     parser = argparse.ArgumentParser()
     parser.add_argument('-v', '--verbose',
@@ -129,16 +96,52 @@ def parse_command_line():
 #                        action='store_true',
 #                        dest='graphical')
 
-    parser.add_argument('-m', '--main-operation',
-                        help='What operation should {} perform?'.format(PROGRAM_NAME),
-                        choices=STR_TO_MAIN_OPERATION,
-                        dest='main_operation',
-                        default=None,
-                        action=MainOperationAction)
-
     cl_args = parser.parse_args()
 
     # TODO: Remove when GUI is ready to be used
     setattr(cl_args, 'graphical', False)
 
     return cl_args
+
+
+class CommandLineInterface:
+    """
+    User interface for running Infinium from the command line.
+    """
+
+    def __init__(self):
+        self.__main_operation = None
+
+    @property
+    def main_operation(self):
+        """ User selection from `main_prompt`. """
+
+        return self.__main_operation
+
+    def main_prompt(self):
+        """ Prompt user to select main operation. """
+
+        while True:
+            print('Choose one of the following numeric options:')
+            print('  1 - Construct model')
+            print('  2 - Add database entry')
+            print('  3 - Analyze stock')
+            print('  4 - Exit')
+            selection = input('\nEnter selection: ')
+            try:
+                self.__main_operation = MainOperation(int(selection))
+                return
+
+            except ValueError:
+                print('\nYou must choose a number from the menu. Try again.\n')
+
+
+class MainOperation(Enum):
+    """
+    Defines end goals the user can achieve by running Infinium.
+    """
+
+    construct_model = 1
+    add_database_entry = 2
+    analyze_stock = 3
+    exit = 4

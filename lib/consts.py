@@ -42,25 +42,6 @@ __contact__ = Developer.EMAIL[__maintainer__]
 PROGRAM_NAME = 'Infinium'
 
 
-class MainOperation(Enum):
-    """
-    Defines end goals the user can achieve by running Infinium.
-    """
-
-    construct_model = 1
-    add_database_entry = 2
-    analyze_stock = 3
-    exit = 4
-
-# Maps strings to MainOperation values.
-STR_TO_MAIN_OPERATION = {'construct_model': MainOperation.construct_model,
-                         'add_data': MainOperation.add_database_entry,
-                         'analyze_stock': MainOperation.analyze_stock}
-
-# Maps MainOperation values to strings.
-MAIN_OPERATION_TO_STR = {value: key for key, value in STR_TO_MAIN_OPERATION.items()}
-
-
 class DatabaseType(Enum):
     """
     Defines supported database types.

@@ -24,6 +24,9 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 from enum import Enum
 
+# Third-party libraries
+from sklearn.linear_model import SGDClassifier
+
 # Infinium library imports.
 import argparse
 from lib.data import PROGRAM_NAME, Developer, ExitCode
@@ -54,7 +57,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-def launch_cli():
+def launch_cli(configuration):
     """
     Launch command line interface event loop.
 
@@ -76,7 +79,7 @@ def launch_cli():
         # or construct a new valuation model.
         user_interface.main_prompt()
         if user_interface.main_operation is MainOperation.construct_model:
-            construct_model()
+            construct_model(user_interface, configuration)
 
         elif user_interface.main_operation is MainOperation.add_database_entry:
             raise NotImplementedError('`add_database_entry` operation not yet implemented.')
@@ -88,8 +91,28 @@ def launch_cli():
             sys.exit(ExitCode.success)
 
 
-def construct_model():
-    raise NotImplementedError()
+def construct_model(configuration, database):
+    classifier = create_classifier(configuration)
+    training_data = extract_training_data(database)
+    train_classifier(classifier, training_data, configuration)
+
+    return classifier
+
+
+def create_classifier(configuration):
+    return SGDClassifier(loss=configuration.sgd.loss,
+                         penalty=configuration.sgd.penalty,
+                         alpha=configuration.sgd.alpha,
+                         l1_ratio=configuration.sgd.l1_ratio,
+                         fit_intercept=configuration.sgd.fit_intercept,
+                         n_iter=configuration.sgd.n_iter,
+                         shuffle=configuration.sgd.shuffe,
+                         verbose=configuration.sgd.verbose,
+                         epsilon=configuration.sgd.epsilon,
+                         n_jobs=configuration.sgd.n_jobs,
+                         learning_rate=configuration.sgd.learning_rate,
+                         eta0=configuration.sgd.eta0,
+                         power_t=configuration.sgd.power_t)
 
 
 def parse_command_line():

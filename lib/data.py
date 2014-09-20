@@ -56,7 +56,6 @@ STR_TO_DATABASE_TYPE = {'pgsql': DatabaseType.pgsql}
 # Maps DatabaseType values to strings.
 DATABASE_TYPE_TO_STR = {value: key for key, value in STR_TO_DATABASE_TYPE.items()}
 
-
 # Name of configuration file.
 CONFIG_FILE_NAME = '.infinium.yml'
 

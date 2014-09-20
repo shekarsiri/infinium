@@ -72,7 +72,7 @@ def main():
 
     else:
         # Use command line interface.
-        launch_cli()
+        launch_cli(configuration)
 
 
 def configure_logging(cl_args, configuration):

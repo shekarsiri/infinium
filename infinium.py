@@ -115,11 +115,7 @@ def connect_database(configuration):
 
     """
 
-    if configuration.database_type == data.DatabaseType.pgsql:
-        # Connect to PostgreSQL database.
-        database = PostgresDatabase(configuration.database_path)
-
-    return database
+    raise NotImplementedError('`connect_database` operation not yet implemented.')
 
 
 def evaluate_model(valuation_model, testing_data):

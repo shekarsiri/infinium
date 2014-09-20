@@ -114,9 +114,8 @@ class ConfigFileCorruptError(ConfigurationError):
 class _Configuration:
     def __init__(self):
         cwd_config_path = Path(data.CONFIG_FILE_NAME)
-        environ_config_path = Path(getenv(data.CONFIG_VAR,
-                                          data.DEFAULT_CONFIG_PATH)) / data.CONFIG_FILE_NAME
-
+        environ_config_dir = Path(getenv(data.CONFIG_VAR, data.DEFAULT_CONFIG_PATH))
+        environ_config_path = environ_config_dir / data.CONFIG_FILE_NAME
         install_config_path = data.INSTALL_PATH / data.CONFIG_FILE_NAME
 
         # First look for config file in current working directory.
@@ -142,6 +141,7 @@ class _Configuration:
         self.__config_path = config_path
 
     def __update_field(self, field, new_value):
+        new_value = str(new_value)
         _thread_lock.acquire()
         old_value = self.__configuration[field]
         self.__configuration[field] = new_value
@@ -159,6 +159,18 @@ class _Configuration:
         finally:
             _thread_lock.release()
 
+    def __get_fielf(self, field):
+        field = str(field)
+        _thread_lock.acquire()
+        try:
+           return self.__configuration[field]
+
+        except KeyError:
+            self.__handle_key_error(field)
+
+        finally:
+            _thread_lock.release()
+
     def __handle_key_error(self, field_name):
         msg = 'Config file field "{}" missing from config file "{}".'
         msg = msg.format(field_name, self.config_path)
@@ -169,54 +181,8 @@ class _Configuration:
         return self.__config_path
 
     @property
-    def main_operation(self):
-        _thread_lock.acquire()
-        try:
-            value = data.STR_TO_MAIN_OPERATION[self.__configuration['main_operation'].lower()]
-
-        except KeyError:
-            self.__handle_key_error('main_operation')
-
-        finally:
-            _thread_lock.release()
-
-        return value
-
-    @main_operation.setter
-    def main_operation(self, value):
-        self.__update_field('main_operation', data.MAIN_OPERATION_TO_STR[value])
-
-    @property
-    def stock_name(self):
-        _thread_lock.acquire()
-        try:
-            value = self.__configuration['stock_name']
-
-        except KeyError:
-            self.__handle_key_error('stock_name')
-
-        finally:
-            _thread_lock.release()
-
-        return value
-
-    @stock_name.setter
-    def stock_name(self, value):
-        self.__update_field('stock_name', str(value))
-
-    @property
     def database_type(self):
-        _thread_lock.acquire()
-        try:
-            value = data.STR_TO_DATABASE_TYPE[self.__configuration['database_type'].lower()]
-
-        except KeyError:
-            self.__handle_key_error('database_type')
-
-        finally:
-            _thread_lock.release()
-
-        return value
+        return self.__get_fielf('database_type')
 
     @database_type.setter
     def database_type(self, value):
@@ -224,54 +190,24 @@ class _Configuration:
 
     @property
     def database_path(self):
-        _thread_lock.acquire()
-        try:
-            value = Path(self.__configuration['database_path'])
-
-        except KeyError:
-            self.__handle_key_error('database_path')
-
-        finally:
-            _thread_lock.release()
-
-        return value
+        return self.__get_fielf('database_path')
 
     @database_path.setter
     def database_path(self, value):
-        self.__update_field('database_path', str(value))
+        self.__update_field('database_path', value)
 
     @property
     def model_path(self):
-        _thread_lock.acquire()
-        try:
-            value = Path(self.__configuration['model_path'])
-
-        except KeyError:
-            self.__handle_key_error('model_path')
-
-        finally:
-            _thread_lock.release()
-
-        return value
+        return self.__get_fielf('model_path')
 
     @model_path.setter
     def model_path(self, value):
-        self.__update_field('model_path', str(value))
+        self.__update_field('model_path', value)
 
     @property
     def log_path(self):
-        _thread_lock.acquire()
-        try:
-            value = Path(self.__configuration['log_path'])
-
-        except KeyError:
-            self.__handle_key_error('log_path')
-
-        finally:
-            _thread_lock.release()
-
-        return value
+        return self.__get_fielf('log_path')
 
     @log_path.setter
     def log_path(self, value):
-        self.__update_field('log_path', str(value))
+        self.__update_field('log_path', value)

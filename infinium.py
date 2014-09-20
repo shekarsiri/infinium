@@ -74,7 +74,7 @@ def main():
 
     else:
         # Use command line interface.
-        launch_cli(cl_args, configuration)
+        launch_cli()
 
 
 def configure_logging(cl_args):

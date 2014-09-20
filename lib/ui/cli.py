@@ -34,7 +34,27 @@ __maintainer__ = Developer.JERRAD_GENSON
 __contact__ = Developer.EMAIL[__maintainer__]
 
 
-def launch_cli(cl_args, configuration):
+WELCOME_MESSAGE = """
+Welcome to Infinium - bleeding-edge stock valuation software.
+
+Copyright 2014 Jerrad M. Genson
+
+Infinium is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Infinium is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
+"""
+
+
+def launch_cli():
     """
     Launch command line interface event loop.
 
@@ -48,6 +68,8 @@ def launch_cli(cl_args, configuration):
     """
 
     user_interface = CommandLineInterface()
+    user_interface.show_welcome()
+
     # Enter CLI event loop.
     while True:
         # Decide whether to analyze a stock, add a new entry to the database,
@@ -118,6 +140,11 @@ class CommandLineInterface:
 
         return self.__main_operation
 
+    def show_welcome(self):
+        """ Display Infinium welcome message. """
+
+        print(WELCOME_MESSAGE)
+
     def main_prompt(self):
         """ Prompt user to select main operation. """
 
@@ -133,7 +160,7 @@ class CommandLineInterface:
                 return
 
             except ValueError:
-                print('\nYou must choose a number from the menu. Try again.\n')
+                print('\nYou must choose a number from the menu. Try again.')
 
 
 class MainOperation(Enum):

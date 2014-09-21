@@ -211,3 +211,51 @@ class _Configuration:
     @log_path.setter
     def log_path(self, value):
         self.__update_field('general', 'log_path', value)
+
+    @property
+    def sgd_loss(self):
+        return self.__get_field('sgd_classifier', 'loss')
+
+    @property
+    def sgd_penalty(self):
+        return self.__get_field('sgd_classifier', 'penalty')
+
+    @property
+    def sgd_alpha(self):
+        return float(self.__get_field('sgd_classifier', 'alpha'))
+
+    @property
+    def sgd_l1_ratio(self):
+        return float(self.__get_field('sgd_classifier', 'l1_ratio'))
+
+    @property
+    def sgd_fit_intercept(self):
+        return bool(self.__get_field('sgd_classifier', 'fit_intercept'))
+
+    @property
+    def sgd_n_iter(self):
+        return int(self.__get_field('sgd_classifier', 'n_iter'))
+
+    @property
+    def sgd_shuffle(self):
+        return bool(self.__get_field('sgd_classifier', 'shuffle'))
+
+    @property
+    def sgd_verbose(self):
+        return bool(self.__get_field('sgd_classifier', 'verbose'))
+
+    @property
+    def sgd_n_jobs(self):
+        return int(self.__get_field('sgd_classifier', 'n_jobs'))
+
+    @property
+    def sgd_learning_rate(self):
+        return self.__get_field('sgd_classifier', 'learning_rate')
+
+    @property
+    def sgd_eta0(self):
+        return float(self.__get_field('sgd_classifier', 'eta0'))
+
+    @property
+    def sgd_power_t(self):
+        return float(self.__get_field('sgd_classifier', 'power_t'))

@@ -79,7 +79,7 @@ def launch_cli(configuration):
         # or construct a new valuation model.
         user_interface.main_prompt()
         if user_interface.main_operation is MainOperation.construct_model:
-            construct_model(user_interface, configuration)
+            construct_model(configuration)
 
         elif user_interface.main_operation is MainOperation.add_database_entry:
             raise NotImplementedError('`add_database_entry` operation not yet implemented.')
@@ -91,7 +91,7 @@ def launch_cli(configuration):
             sys.exit(ExitCode.success)
 
 
-def construct_model(configuration, database):
+def construct_model(configuration):
     classifier = create_classifier(configuration)
     training_data = extract_training_data(database)
     train_classifier(classifier, training_data, configuration)
@@ -100,19 +100,18 @@ def construct_model(configuration, database):
 
 
 def create_classifier(configuration):
-    return SGDClassifier(loss=configuration.sgd.loss,
-                         penalty=configuration.sgd.penalty,
-                         alpha=configuration.sgd.alpha,
-                         l1_ratio=configuration.sgd.l1_ratio,
-                         fit_intercept=configuration.sgd.fit_intercept,
-                         n_iter=configuration.sgd.n_iter,
-                         shuffle=configuration.sgd.shuffe,
-                         verbose=configuration.sgd.verbose,
-                         epsilon=configuration.sgd.epsilon,
-                         n_jobs=configuration.sgd.n_jobs,
-                         learning_rate=configuration.sgd.learning_rate,
-                         eta0=configuration.sgd.eta0,
-                         power_t=configuration.sgd.power_t)
+    return SGDClassifier(loss=configuration.sgd_loss,
+                         penalty=configuration.sgd_penalty,
+                         alpha=configuration.sgd_alpha,
+                         l1_ratio=configuration.sgd_l1_ratio,
+                         fit_intercept=configuration.sgd_fit_intercept,
+                         n_iter=configuration.sgd_n_iter,
+                         shuffle=configuration.sgd_shuffle,
+                         verbose=configuration.sgd_verbose,
+                         n_jobs=configuration.sgd_n_jobs,
+                         learning_rate=configuration.sgd_learning_rate,
+                         eta0=configuration.sgd_eta0,
+                         power_t=configuration.sgd_power_t)
 
 
 def parse_command_line():

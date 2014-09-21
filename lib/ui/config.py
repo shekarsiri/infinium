@@ -140,11 +140,11 @@ class _Configuration:
 
         self.__config_path = config_path
 
-    def __update_field(self, field, new_value):
+    def __update_field(self, section, field, new_value):
         new_value = str(new_value)
         _thread_lock.acquire()
-        old_value = self.__configuration[field]
-        self.__configuration[field] = new_value
+        old_value = self.__configuration[section][field]
+        self.__configuration[section][field] = new_value
         try:
             with self.__config_path.open('w') as config_file:
                 dump(self.__configuration,
@@ -159,21 +159,21 @@ class _Configuration:
         finally:
             _thread_lock.release()
 
-    def __get_fielf(self, field):
+    def __get_field(self, section, field):
         field = str(field)
         _thread_lock.acquire()
         try:
-           return self.__configuration[field]
+           return self.__configuration[section][field]
 
         except KeyError:
-            self.__handle_key_error(field)
+            self.__handle_key_error(section, field)
 
         finally:
             _thread_lock.release()
 
-    def __handle_key_error(self, field_name):
-        msg = 'Config file field "{}" missing from config file "{}".'
-        msg = msg.format(field_name, self.config_path)
+    def __handle_key_error(self, section, field_name):
+        msg = 'Config file section "{}" field "{}" missing from config file "{}".'
+        msg = msg.format(section, field_name, self.config_path)
         raise ConfigFileCorruptError(msg)
 
     @property
@@ -182,32 +182,32 @@ class _Configuration:
 
     @property
     def database_type(self):
-        return self.__get_fielf('database_type')
+        return self.__get_field('general', 'database_type')
 
     @database_type.setter
     def database_type(self, value):
-        self.__update_field('database_type', data.DATABASE_TYPE_TO_STR[value])
+        self.__update_field('general', 'database_type', data.DATABASE_TYPE_TO_STR[value])
 
     @property
     def database_path(self):
-        return self.__get_fielf('database_path')
+        return self.__get_field('general', 'database_path')
 
     @database_path.setter
     def database_path(self, value):
-        self.__update_field('database_path', value)
+        self.__update_field('general', 'database_path', value)
 
     @property
     def model_path(self):
-        return self.__get_fielf('model_path')
+        return self.__get_field('general', 'model_path')
 
     @model_path.setter
     def model_path(self, value):
-        self.__update_field('model_path', value)
+        self.__update_field('general', 'model_path', value)
 
     @property
     def log_path(self):
-        return self.__get_fielf('log_path')
+        return self.__get_field('general', 'log_path')
 
     @log_path.setter
     def log_path(self, value):
-        self.__update_field('log_path', value)
+        self.__update_field('general', 'log_path', value)

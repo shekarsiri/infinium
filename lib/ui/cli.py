@@ -35,7 +35,7 @@ __contact__ = Developer.EMAIL[__maintainer__]
 
 
 WELCOME_MESSAGE = """
-Welcome to Infinium - bleeding-edge stock valuation software.
+Welcome to Infinium - cutting-edge stock valuation and analysis software.
 
 Copyright 2014 Jerrad M. Genson
 

@@ -24,15 +24,12 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 from enum import Enum
 
-# Third-party libraries
-from sklearn.linear_model import SGDClassifier
-
 # Infinium library imports.
 import argparse
+from lib.ml import construct_model
 from lib.data import PROGRAM_NAME, Developer, ExitCode
 
 
-# Module header.
 __maintainer__ = Developer.JERRAD_GENSON
 __contact__ = Developer.EMAIL[__maintainer__]
 
@@ -89,29 +86,6 @@ def launch_cli(configuration):
 
         elif user_interface.main_operation is MainOperation.exit:
             sys.exit(ExitCode.success)
-
-
-def construct_model(configuration):
-    classifier = create_classifier(configuration)
-    training_data = extract_training_data(database)
-    train_classifier(classifier, training_data, configuration)
-
-    return classifier
-
-
-def create_classifier(configuration):
-    return SGDClassifier(loss=configuration.sgd_loss,
-                         penalty=configuration.sgd_penalty,
-                         alpha=configuration.sgd_alpha,
-                         l1_ratio=configuration.sgd_l1_ratio,
-                         fit_intercept=configuration.sgd_fit_intercept,
-                         n_iter=configuration.sgd_n_iter,
-                         shuffle=configuration.sgd_shuffle,
-                         verbose=configuration.sgd_verbose,
-                         n_jobs=configuration.sgd_n_jobs,
-                         learning_rate=configuration.sgd_learning_rate,
-                         eta0=configuration.sgd_eta0,
-                         power_t=configuration.sgd_power_t)
 
 
 def parse_command_line():

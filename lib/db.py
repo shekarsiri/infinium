@@ -38,6 +38,29 @@ __contact__ = data.Developer.EMAIL[__maintainer__]
 _Base = declarative_base()
 
 
+def extract_training_data(database):
+    raise NotImplementedError('`extract_training_data` operation not yet implemented.')
+
+
+def evaluate_model(valuation_model, testing_data):
+    raise NotImplementedError('`evaluate_model` operation not yet implemented.')
+
+
+def connect_database(configuration):
+    """
+    Decide which database to use and connect to it.
+
+    Args
+      configuration: The configuration object from ``lib.ui.config``.
+
+    Returns
+      An instance of ``lib.db.base.Database``.
+
+    """
+
+    raise NotImplementedError('`connect_database` operation not yet implemented.')
+
+
 class Companies(_Base):
     __tablename__ = 'companies'
     id = Column(String, primary_key=True)

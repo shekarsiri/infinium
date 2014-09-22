@@ -52,3 +52,11 @@ def create_classifier(configuration):
                          learning_rate=configuration.sgd_learning_rate,
                          eta0=configuration.sgd_eta0,
                          power_t=configuration.sgd_power_t)
+
+
+def load_model(path):
+    raise NotImplementedError('`load_valuation_model` operation not yet implemented.')
+
+
+def save_model(valuation_model, path):
+    raise NotImplementedError('`save_valuation_model` operation not yet implemented.')

@@ -103,40 +103,5 @@ def configure_logging(cl_args, configuration):
         root.addHandler(stderr_handler)
 
 
-def connect_database(configuration):
-    """
-    Decide which database to use and connect to it.
-
-    Args
-      configuration: The configuration object from ``lib.ui.config``.
-
-    Returns
-      An instance of ``lib.db.base.Database``.
-
-    """
-
-    raise NotImplementedError('`connect_database` operation not yet implemented.')
-
-
-def evaluate_model(valuation_model, testing_data):
-    raise NotImplementedError('`evaluate_model` operation not yet implemented.')
-
-
-def extract_training_data(database):
-    raise NotImplementedError('`extract_training_data` operation not yet implemented.')
-
-
-def save_model(valuation_model, path):
-    raise NotImplementedError('`save_valuation_model` operation not yet implemented.')
-
-
-def load_model(path):
-    raise NotImplementedError('`load_valuation_model` operation not yet implemented.')
-
-
-def construct_model(training_data, classifier):
-    raise NotImplementedError('`construct_model` operation not yet implemented.')
-
-
 if __name__ == '__main__':
     main()

@@ -113,8 +113,7 @@ class Session:
     """
 
     def __init__(self):
-        msg = '`connect_database` not called before instantiating `Session`.'
-        raise SessionNotDefinedError(msg)
+        raise SessionNotDefinedError('No database has been connected.')
 
 
 class SessionNotDefinedError(Exception):

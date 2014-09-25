@@ -21,8 +21,8 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Third-party imports.
-from sqlalchemy import Column, String, ForeignKey, Enum, null, Date, Float
-from sqlalchemy.orm import relationship, backref
+from sqlalchemy import Column, String, ForeignKey, Enum, null, Date, Float, create_engine
+from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
 # Infinium library imports.
@@ -46,19 +46,34 @@ def evaluate_model(valuation_model, testing_data):
     raise NotImplementedError('`evaluate_model` operation not yet implemented.')
 
 
-def connect_database(configuration):
+def connect_database(dialect, driver, username, password, host, port, database,
+                     echo=False):
     """
-    Decide which database to use and connect to it.
+    Connect to the Infinium database. ``Session`` may be instantiated only
+    after successfully calling this function.
 
     Args
-      configuration: The configuration object from ``lib.ui.config``.
+      dialect: The database dialect (e.g. 'postgresql').
+      driver: The database driver (e.g. 'psycopg2').
+      username: Database access credentials username.
+      password: Database access credentials password.
+      host: IP address of the database host machine.
+      port: Which port the database service is listening on.
+      database: Name of the database.
+      echo: ``True`` to make database queries in verbose mode.
 
     Returns
-      An instance of ``lib.db.base.Database``.
+      None
 
     """
 
-    raise NotImplementedError('`connect_database` operation not yet implemented.')
+    global Session
+
+    url = '{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
+    url = url.format(dialect, driver, username, password, host, port, database)
+    engine = create_engine(url, echo=echo)
+    _Base.metadata.create_all(engine)
+    Session = sessionmaker(bind=engine)
 
 
 class Companies(_Base):
@@ -90,3 +105,22 @@ class StockPrices(_Base):
     date = Column(Date, primary_key=True)
     price = Column(Float)
     valuation = Column(Enum('accurate', 'low', 'very_low'), nullable=True, default=null)
+
+
+class Session:
+    """
+    Do not instantiate this class. You must call ``connect_database`` first.
+    """
+
+    def __init__(self):
+        msg = '`connect_database` not called before instantiating `Session`.'
+        raise SessionNotDefinedError(msg)
+
+
+class SessionNotDefinedError(Exception):
+    """
+    Indicates a `Session` instance was created before `connect_database` was called.
+
+    """
+
+    pass

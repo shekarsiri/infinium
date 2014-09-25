@@ -181,22 +181,6 @@ class _Configuration:
         return self.__config_path
 
     @property
-    def database_type(self):
-        return self.__get_field('general', 'database_type')
-
-    @database_type.setter
-    def database_type(self, value):
-        self.__update_field('general', 'database_type', data.DATABASE_TYPE_TO_STR[value])
-
-    @property
-    def database_path(self):
-        return self.__get_field('general', 'database_path')
-
-    @database_path.setter
-    def database_path(self, value):
-        self.__update_field('general', 'database_path', value)
-
-    @property
     def model_path(self):
         return self.__get_field('general', 'model_path')
 

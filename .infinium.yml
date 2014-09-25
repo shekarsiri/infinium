@@ -1,6 +1,4 @@
 general:
-  database_type: pgsql
-  database_path: data/stock_data.yml
   model_path: data/valuation_model.yml
   log_path: .infinium.log
 sgd_classifier:

@@ -70,7 +70,14 @@ def connect_database(dialect, driver, username, password, host, port, database,
     global Session
 
     url = '{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
-    url = url.format(dialect, driver, username, password, host, port, database)
+    url = url.format(dialect=dialect,
+                     driver=driver,
+                     username=username,
+                     password=password,
+                     host=host,
+                     port=port,
+                     database=database)
+
     engine = create_engine(url, echo=echo)
     _Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)

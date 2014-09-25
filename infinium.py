@@ -60,7 +60,7 @@ def main():
 
     except (ConfigurationError, OSError) as error:
         print(error, sys.stderr)
-        sys.exit(data.ExitCode.config_file_not_found)
+        sys.exit(data.ExitCode.config_file_not_found.value)
 
     # Configure root Logger.
     configure_logging(cl_args, configuration)

@@ -85,7 +85,7 @@ def launch_cli(configuration):
             raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
         elif user_interface.main_operation is MainOperation.exit:
-            sys.exit(ExitCode.success)
+            sys.exit(ExitCode.success.value)
 
 
 def parse_command_line():

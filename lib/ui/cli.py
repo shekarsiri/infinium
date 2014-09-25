@@ -22,12 +22,17 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Python standard library imports.
 import sys
+import logging
 from enum import Enum
+
+# Third-party library imports.
+from sqlalchemy.exc import OperationalError
 
 # Infinium library imports.
 import argparse
 from lib.ml import construct_model
 from lib.data import PROGRAM_NAME, Developer, ExitCode
+from lib.db import connect_database
 
 
 __maintainer__ = Developer.JERRAD_GENSON
@@ -68,6 +73,26 @@ def launch_cli(configuration):
     """
 
     _show_welcome()
+
+    # Connect to database.
+    username = configuration.db_username,
+    password = configuration.db_password,
+    while True:
+        try:
+            connect_database(configuration.db_dialect,
+                             configuration.db_driver,
+                             username,
+                             password,
+                             configuration.db_host,
+                             configuration.db_port,
+                             configuration.db_database,
+                             configuration.db_echo)
+
+        except OperationalError:
+            logging.exception('Database credentials not valid.')
+            username, password = _prompt_db_credentials(configuration.db_host,
+                                                        configuration.db_port,
+                                                        configuration.db_database)
 
     # Enter CLI event loop.
     while True:
@@ -148,6 +173,28 @@ def _main_prompt():
 
         except ValueError:
             print('\nYou must choose a number from the menu. Try again.')
+
+
+def _prompt_db_credentials(host, port, database):
+    """
+    Prompt user for their database access credentials.
+
+    Args
+      host: IP address of the database server.
+      port: Port number of the database service.
+      database: Name of the Infinium database.
+
+    Return
+      A tuple of (username, password).
+
+    """
+
+    print('\nDatabase connection failed.')
+    print('Connecting to database at "{}:{}/{}"...'.format(host, port, database))
+    username = input('Enter username: ')
+    password = input('Enter password: ')
+
+    return username, password
 
 
 class _MainOperation(Enum):

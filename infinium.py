@@ -31,7 +31,6 @@ import logging
 from lib import data
 from lib.ui.cli import parse_command_line, launch_cli
 from lib.ui.config import get_config, ConfigurationError
-from lib.db import connect_database
 
 
 # Module header.
@@ -65,16 +64,6 @@ def main():
 
     # Configure root Logger.
     configure_logging(cl_args, configuration)
-
-    # Connect to database.
-    connect_database(configuration.db_dialect,
-                     configuration.db_driver,
-                     configuration.db_username,
-                     configuration.db_password,
-                     configuration.db_host,
-                     configuration.db_port,
-                     configuration.db_database,
-                     configuration.db_echo)
 
     # Launch user interface.
     if cl_args.graphical:

@@ -42,10 +42,6 @@ def extract_training_data(database):
     raise NotImplementedError('`extract_training_data` operation not yet implemented.')
 
 
-def evaluate_model(valuation_model, testing_data):
-    raise NotImplementedError('`evaluate_model` operation not yet implemented.')
-
-
 def connect_database(dialect, driver, username, password, host, port, database,
                      echo=False):
     """

@@ -60,3 +60,7 @@ def load_model(path):
 
 def save_model(valuation_model, path):
     raise NotImplementedError('`save_valuation_model` operation not yet implemented.')
+
+
+def evaluate_model(valuation_model, testing_data):
+    raise NotImplementedError('`evaluate_model` operation not yet implemented.')

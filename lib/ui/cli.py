@@ -88,11 +88,20 @@ def launch_cli(configuration):
                              configuration.db_database,
                              configuration.db_echo)
 
+            break
+
         except OperationalError:
-            logging.exception('Database credentials not valid.')
+            logging.warning('Database credentials not valid.')
             username, password = _prompt_db_credentials(configuration.db_host,
                                                         configuration.db_port,
                                                         configuration.db_database)
+
+    msg = 'Connected to database at {}:{}/{}'
+    msg = msg.format(configuration.db_host,
+                     configuration.db_port,
+                     configuration.db_database)
+
+    logging.info(msg)
 
     # Enter CLI event loop.
     while True:

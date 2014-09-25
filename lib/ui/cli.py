@@ -67,24 +67,23 @@ def launch_cli(configuration):
 
     """
 
-    user_interface = CommandLineInterface()
-    user_interface.show_welcome()
+    _show_welcome()
 
     # Enter CLI event loop.
     while True:
         # Decide whether to analyze a stock, add a new entry to the database,
         # or construct a new valuation model.
-        user_interface.main_prompt()
-        if user_interface.main_operation is MainOperation.construct_model:
+        main_operation = _main_prompt()
+        if main_operation is _MainOperation.construct_model:
             construct_model(configuration)
 
-        elif user_interface.main_operation is MainOperation.add_database_entry:
+        elif main_operation is _MainOperation.add_database_entry:
             raise NotImplementedError('`add_database_entry` operation not yet implemented.')
 
-        elif user_interface.main_operation is MainOperation.analyze_stock:
+        elif main_operation is _MainOperation.analyze_stock:
             raise NotImplementedError('`analyze_stock` operation not yet implemented.')
 
-        elif user_interface.main_operation is MainOperation.exit:
+        elif main_operation is _MainOperation.exit:
             sys.exit(ExitCode.success.value)
 
 
@@ -122,44 +121,36 @@ def parse_command_line():
     return cl_args
 
 
-class CommandLineInterface:
+def _show_welcome():
+    """ Display Infinium welcome message. """
+
+    print(WELCOME_MESSAGE)
+
+
+def _main_prompt():
     """
-    User interface for running Infinium from the command line.
+    Prompt user to select main operation.
+
+    Returns
+      Instance of ``MainOperation``.
+
     """
 
-    def __init__(self):
-        self.__main_operation = None
+    while True:
+        print('Choose one of the following numeric options:')
+        print('  1 - Construct model')
+        print('  2 - Add database entry')
+        print('  3 - Analyze stock')
+        print('  4 - Exit')
+        selection = input('\nEnter selection: ')
+        try:
+            return _MainOperation(int(selection))
 
-    @property
-    def main_operation(self):
-        """ User selection from `main_prompt`. """
-
-        return self.__main_operation
-
-    def show_welcome(self):
-        """ Display Infinium welcome message. """
-
-        print(WELCOME_MESSAGE)
-
-    def main_prompt(self):
-        """ Prompt user to select main operation. """
-
-        while True:
-            print('Choose one of the following numeric options:')
-            print('  1 - Construct model')
-            print('  2 - Add database entry')
-            print('  3 - Analyze stock')
-            print('  4 - Exit')
-            selection = input('\nEnter selection: ')
-            try:
-                self.__main_operation = MainOperation(int(selection))
-                return
-
-            except ValueError:
-                print('\nYou must choose a number from the menu. Try again.')
+        except ValueError:
+            print('\nYou must choose a number from the menu. Try again.')
 
 
-class MainOperation(Enum):
+class _MainOperation(Enum):
     """
     Defines end goals the user can achieve by running Infinium.
     """

@@ -176,6 +176,8 @@ class _Configuration:
         msg = msg.format(section, field_name, self.config_path)
         raise ConfigFileCorruptError(msg)
 
+
+    ## general section ##
     @property
     def config_path(self):
         return self.__config_path
@@ -196,6 +198,8 @@ class _Configuration:
     def log_path(self, value):
         self.__update_field('general', 'log_path', value)
 
+
+    ## sgd_classifier section ##
     @property
     def sgd_loss(self):
         return self.__get_field('sgd_classifier', 'loss')
@@ -243,3 +247,37 @@ class _Configuration:
     @property
     def sgd_power_t(self):
         return float(self.__get_field('sgd_classifier', 'power_t'))
+
+
+    ## database section ##
+    @property
+    def db_dialect(self):
+        return self.__get_field('database', 'dialect')
+
+    @property
+    def db_driver(self):
+        return self.__get_field('database', 'driver')
+
+    @property
+    def db_username(self):
+        return self.__get_field('database', 'username')
+
+    @property
+    def db_password(self):
+        return self.__get_field('database', 'password')
+
+    @property
+    def db_host(self):
+        return self.__get_field('database', 'host')
+
+    @property
+    def db_port(self):
+        return self.__get_field('database', 'port')
+
+    @property
+    def db_database(self):
+        return self.__get_field('database', 'database')
+
+    @property
+    def db_echo(self):
+        return bool(self.__get_field('database', 'echo'))

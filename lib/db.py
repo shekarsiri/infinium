@@ -82,7 +82,9 @@ def connect_database(dialect, driver, username, password, host, port, database,
 class Companies(_Base):
     __tablename__ = 'companies'
     id = Column(String, primary_key=True)
-    data_set_type = Column(Enum('train', 'test'), nullable=True, default=null)
+    data_set_type = Column(Enum('train', 'test', name='data_set_type'),
+                           nullable=True,
+                           default=null)
 
 
 class Finances(_Base):
@@ -107,7 +109,8 @@ class StockPrices(_Base):
     company_id = Column(String, ForeignKey('companies.id'), primary_key=True)
     date = Column(Date, primary_key=True)
     price = Column(Float)
-    valuation = Column(Enum('accurate', 'low', 'very_low'), nullable=True, default=null)
+    valuation = Column(Enum('accurate', 'low', 'very_low', name='valuation'),
+                       nullable=True, default=null)
 
 
 class Session:

@@ -77,8 +77,8 @@ def launch_cli(configuration):
     _show_welcome()
 
     # Connect to database.
-    username = configuration.db_username,
-    password = configuration.db_password,
+    username = configuration.db_username
+    password = configuration.db_password
     while True:
         try:
             db.connect_database(configuration.db_dialect,
@@ -172,18 +172,15 @@ def _main_prompt():
 
     """
 
-    while True:
-        print('Choose one of the following numeric options:')
-        print('  1 - Construct model')
-        print('  2 - Add database entry')
-        print('  3 - Analyze stock')
-        print('  4 - Exit')
-        selection = input('\nEnter selection: ')
-        try:
-            return _MainOperation(int(selection))
-
-        except ValueError:
-            print('\nYou must choose a number from the menu. Try again.')
+    prompt = 'Choose one of the following numeric options:\n'
+    prompt += '  1 - Construct model\n'
+    prompt += '  2 - Add database entry\n'
+    prompt += '  3 - Analyze stock\n'
+    prompt += '  4 - Exit\n'
+    prompt += '\nEnter selection: '
+    return _prompt_until_valid(prompt,
+                                 type_=lambda x : _MainOperation(int(x)),
+                                 error='\nYou must choose a number from the menu. Try again.')
 
 
 def _add_database_entry():
@@ -193,45 +190,17 @@ def _add_database_entry():
 
     session = db.Session()
     company_id = input('\nEnter company ID: ')
-    for company in session.query(db.Companies.id).filter(db.Companies.id == company_id):
+    for _ in session.query(db.Companies.id).filter(db.Companies.id == company_id):
         break
 
     else:
         company = db.Companies(id=company_id)
         session.add(company)
 
-    while True:
-        try:
-            year = int(input('Enter stock price year: '))
-            break
-
-        except ValueError:
-            print('Enter year in the format `XXXX`. Example: 2012\n')
-
-    while True:
-        try:
-            month = int(input('Enter stock price month: '))
-            break
-
-        except ValueError:
-            print('Enter month in the format `XX`. Example (for December): 12\n')
-
-    while True:
-        try:
-            day = int(input('Enter stock price day: '))
-            break
-
-        except ValueError:
-            print('Enter day in the format `XX`. Example: 23\n')
-
-    while True:
-        try:
-            price = float(input('Enter the stock price: '))
-            break
-
-        except ValueError:
-            print('Stock price must be a real number. Example: 40.50\n')
-
+    year = _prompt_until_valid('Enter stock price year: ', type_=int)
+    month = _prompt_until_valid('Enter stock price month: ', type_=int)
+    day = _prompt_until_valid('Enter stock price day: ', type_=int)
+    price = _prompt_until_valid('Enter the stock price: ', type_=float)
     stock_price = db.StockPrices(company_id=company_id,
                                  price=price,
                                  date=date(year, month, day))
@@ -260,6 +229,23 @@ def _prompt_db_credentials(host, port, database):
     password = getpass('Enter password: ')
 
     return username, password
+
+
+def _prompt_until_valid(prompt, error=None, type_=str, input=input):
+    """
+    Prompt the user for input until it matches `type_`.
+    """
+
+    while True:
+        try:
+            return type_(input(prompt))
+
+        except ValueError:
+            if error:
+                print(error)
+
+            else:
+                print('Input must be of type `{}`.'.format(type_.__name__))
 
 
 class _MainOperation(Enum):

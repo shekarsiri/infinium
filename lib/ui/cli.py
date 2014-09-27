@@ -43,7 +43,7 @@ __contact__ = Developer.EMAIL[__maintainer__]
 
 
 # Module constants
-DOLLARS = '^\d+\.?\d*$'
+DOLLARS = '^\d*\.?\d{0,2}$'
 YEARS = '^\d{4}$'
 MONTHS = '^\d{1,2}$'
 DAYS = '^\d{1,2}$'

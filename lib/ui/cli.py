@@ -42,6 +42,9 @@ __maintainer__ = Developer.JERRAD_GENSON
 __contact__ = Developer.EMAIL[__maintainer__]
 
 
+# Module constants
+DOLLARS = '^\d+\.?\d*$'
+
 WELCOME_MESSAGE = """
 Welcome to Infinium - cutting-edge stock valuation and analysis software.
 
@@ -212,13 +215,68 @@ def _add_database_entry():
 
     price = _prompt_until_valid('Enter the stock price: ',
                                 type_=float,
-                                pattern='^\d+\.?\d*$')
+                                pattern=DOLLARS)
 
     stock_price = db.StockPrices(company_id=company_id,
                                  price=price,
                                  date=date(year, month, day))
 
     session.add(stock_price)
+    for _ in session.query(db.Finances.company_id).filter(db.Finances.company_id == company_id,
+                                                          db.Finances.year == date(year, 1, 1)):
+        break
+
+    else:
+        roe = _prompt_until_valid('Enter return on equity: ',
+                                     type_=float,
+                                     pattern=DOLLARS)
+
+        npm = _prompt_until_valid('Enter net profit margin: ',
+                                     type_=float,
+                                     pattern=DOLLARS)
+
+        net_sales = _prompt_until_valid('Enter net sales: ',
+                                           type_=float,
+                                           pattern=DOLLARS)
+
+        net_income = _prompt_until_valid('Enter net income: ',
+                                            type_=float,
+                                            pattern=DOLLARS)
+
+        epsg = _prompt_until_valid('Enter earnings per share growth: ',
+                                      type_=float,
+                                      pattern=DOLLARS)
+
+        tca = _prompt_until_valid('Enter total current assets: ',
+                                     type_=float,
+                                     pattern=DOLLARS)
+
+        tcl = _prompt_until_valid('Enter total current liabilities: ',
+                                     type_=float,
+                                     pattern=DOLLARS)
+
+        fcf = _prompt_until_valid('Enter free cash flow: ',
+                                     type_=float,
+                                     pattern=DOLLARS)
+
+        operating_margin = _prompt_until_valid('Enter operating margin: ',
+                                                  type_=float,
+                                                  pattern=DOLLARS)
+
+        finances = db.Finances(company_id=company_id,
+                               year=date(year, 1, 1),
+                               return_on_equity=roe,
+                               net_profit_margin=npm,
+                               net_sales=net_sales,
+                               net_income=net_income,
+                               earnings_per_share_growth=epsg,
+                               total_current_assets=tca,
+                               total_current_liabilities=tcl,
+                               free_cash_flow=fcf,
+                               operating_margin=operating_margin)
+
+        session.add(finances)
+
     session.commit()
 
 

@@ -228,40 +228,40 @@ def _add_database_entry():
 
     else:
         roe = _prompt_until_valid('Enter return on equity: ',
-                                     type_=float,
-                                     pattern=DOLLARS)
+                                  type_=float,
+                                  pattern=DOLLARS)
 
         npm = _prompt_until_valid('Enter net profit margin: ',
-                                     type_=float,
-                                     pattern=DOLLARS)
+                                  type_=float,
+                                  pattern=DOLLARS)
 
         net_sales = _prompt_until_valid('Enter net sales: ',
-                                           type_=float,
-                                           pattern=DOLLARS)
+                                        type_=float,
+                                        pattern=DOLLARS)
 
         net_income = _prompt_until_valid('Enter net income: ',
-                                            type_=float,
-                                            pattern=DOLLARS)
+                                         type_=float,
+                                         pattern=DOLLARS)
 
         epsg = _prompt_until_valid('Enter earnings per share growth: ',
-                                      type_=float,
-                                      pattern=DOLLARS)
+                                   type_=float,
+                                   pattern=DOLLARS)
 
         tca = _prompt_until_valid('Enter total current assets: ',
-                                     type_=float,
-                                     pattern=DOLLARS)
+                                  type_=float,
+                                  pattern=DOLLARS)
 
         tcl = _prompt_until_valid('Enter total current liabilities: ',
-                                     type_=float,
-                                     pattern=DOLLARS)
+                                  type_=float,
+                                  pattern=DOLLARS)
 
         fcf = _prompt_until_valid('Enter free cash flow: ',
-                                     type_=float,
-                                     pattern=DOLLARS)
+                                  type_=float,
+                                  pattern=DOLLARS)
 
         operating_margin = _prompt_until_valid('Enter operating margin: ',
-                                                  type_=float,
-                                                  pattern=DOLLARS)
+                                               type_=float,
+                                               pattern=DOLLARS)
 
         finances = db.Finances(company_id=company_id,
                                year=date(year, 1, 1),

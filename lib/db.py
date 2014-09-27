@@ -107,7 +107,7 @@ class StockPrices(_Base):
     date = Column(Date, primary_key=True)
     price = Column(Float)
     valuation = Column(Enum('accurate', 'low', 'very_low', name='valuation'),
-                       nullable=True, default=null)
+                       nullable=True)
 
 
 class Session:

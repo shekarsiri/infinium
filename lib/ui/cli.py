@@ -231,8 +231,7 @@ def _add_database_entry():
         except ValueError:
             print('Stock price must be a real number. Example: 40.50\n')
 
-    stock_price = db.StockPrices(company=company,
-                                 company_id=company_id,
+    stock_price = db.StockPrices(company_id=company_id,
                                  price=price,
                                  date=date(year, month, day))
 

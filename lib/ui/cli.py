@@ -25,6 +25,7 @@ import sys
 import logging
 from enum import Enum
 from datetime import date
+from getpass import getpass
 
 # Third-party library imports.
 from sqlalchemy.exc import OperationalError
@@ -256,7 +257,7 @@ def _prompt_db_credentials(host, port, database):
     print('\nDatabase connection failed.')
     print('Connecting to database at "{}:{}/{}"...'.format(host, port, database))
     username = input('Enter username: ')
-    password = input('Enter password: ')
+    password = getpass('Enter password: ')
 
     return username, password
 

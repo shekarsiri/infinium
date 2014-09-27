@@ -123,8 +123,11 @@ def launch_cli(configuration):
         elif main_operation is _MainOperation.add_database_entry:
             _add_database_entry()
 
+        elif main_operation is _MainOperation.parse_annual_report:
+            raise NotImplementedError()
+
         elif main_operation is _MainOperation.analyze_stock:
-            raise NotImplementedError('`analyze_stock` operation not yet implemented.')
+            raise NotImplementedError()
 
         elif main_operation is _MainOperation.exit:
             sys.exit(ExitCode.success.value)
@@ -182,12 +185,13 @@ def _main_prompt():
     prompt = 'Choose one of the following numeric options:\n'
     prompt += '  1 - Construct model\n'
     prompt += '  2 - Add database entry\n'
-    prompt += '  3 - Analyze stock\n'
-    prompt += '  4 - Exit\n'
+    prompt += '  3 - Parse annual report\n'
+    prompt += '  4 - Analyze stock\n'
+    prompt += '  5 - Exit\n'
     prompt += '\nEnter selection: '
     return _prompt_until_valid(prompt,
-                                 type_=lambda x : _MainOperation(int(x)),
-                                 error='\nYou must choose a number from the menu. Try again.')
+                               type_=lambda x : _MainOperation(int(x)),
+                               error='\nYou must choose a number from the menu. Try again.')
 
 
 def _add_database_entry():
@@ -335,5 +339,6 @@ class _MainOperation(Enum):
 
     construct_model = 1
     add_database_entry = 2
-    analyze_stock = 3
-    exit = 4
+    parse_annual_report = 3
+    analyze_stock = 4
+    exit = 5

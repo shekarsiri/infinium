@@ -24,15 +24,16 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import logging
 from enum import Enum
+from datetime import date
 
 # Third-party library imports.
 from sqlalchemy.exc import OperationalError
 
 # Infinium library imports.
 import argparse
+from lib import db
 from lib.ml import construct_model
 from lib.data import PROGRAM_NAME, Developer, ExitCode
-from lib.db import connect_database
 
 
 __maintainer__ = Developer.JERRAD_GENSON
@@ -79,14 +80,14 @@ def launch_cli(configuration):
     password = configuration.db_password,
     while True:
         try:
-            connect_database(configuration.db_dialect,
-                             configuration.db_driver,
-                             username,
-                             password,
-                             configuration.db_host,
-                             configuration.db_port,
-                             configuration.db_database,
-                             configuration.db_echo)
+            db.connect_database(configuration.db_dialect,
+                                configuration.db_driver,
+                                username,
+                                password,
+                                configuration.db_host,
+                                configuration.db_port,
+                                configuration.db_database,
+                                configuration.db_echo)
 
             break
 
@@ -112,7 +113,7 @@ def launch_cli(configuration):
             construct_model(configuration)
 
         elif main_operation is _MainOperation.add_database_entry:
-            raise NotImplementedError('`add_database_entry` operation not yet implemented.')
+            _add_database_entry()
 
         elif main_operation is _MainOperation.analyze_stock:
             raise NotImplementedError('`analyze_stock` operation not yet implemented.')
@@ -182,6 +183,61 @@ def _main_prompt():
 
         except ValueError:
             print('\nYou must choose a number from the menu. Try again.')
+
+
+def _add_database_entry():
+    """
+    Event handler for `Add database entry`.
+    """
+
+    session = db.Session()
+    company_id = input('\nEnter company ID: ')
+    for company in session.query(db.Companies.id).filter(db.Companies.id == company_id):
+        break
+
+    else:
+        company = db.Companies(id=company_id)
+        session.add(company)
+
+    while True:
+        try:
+            year = int(input('Enter stock price year: '))
+            break
+
+        except ValueError:
+            print('Enter year in the format `XXXX`. Example: 2012\n')
+
+    while True:
+        try:
+            month = int(input('Enter stock price month: '))
+            break
+
+        except ValueError:
+            print('Enter month in the format `XX`. Example (for December): 12\n')
+
+    while True:
+        try:
+            day = int(input('Enter stock price day: '))
+            break
+
+        except ValueError:
+            print('Enter day in the format `XX`. Example: 23\n')
+
+    while True:
+        try:
+            price = float(input('Enter the stock price: '))
+            break
+
+        except ValueError:
+            print('Stock price must be a real number. Example: 40.50\n')
+
+    stock_price = db.StockPrices(company=company,
+                                 company_id=company_id,
+                                 price=price,
+                                 date=date(year, month, day))
+
+    session.add(stock_price)
+    session.commit()
 
 
 def _prompt_db_credentials(host, port, database):

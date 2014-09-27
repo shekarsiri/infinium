@@ -82,9 +82,6 @@ def connect_database(dialect, driver, username, password, host, port, database,
 class Companies(_Base):
     __tablename__ = 'companies'
     id = Column(String, primary_key=True)
-    data_set_type = Column(Enum('train', 'test', name='data_set_type'),
-                           nullable=True,
-                           default=null)
 
 
 class Finances(_Base):

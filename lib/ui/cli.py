@@ -44,6 +44,9 @@ __contact__ = Developer.EMAIL[__maintainer__]
 
 # Module constants
 DOLLARS = '^\d+\.?\d*$'
+YEARS = '^\d{4}$'
+MONTHS = '^\d{1,2}$'
+DAYS = '^\d{1,2}$'
 
 WELCOME_MESSAGE = """
 Welcome to Infinium - cutting-edge stock valuation and analysis software.
@@ -203,15 +206,15 @@ def _add_database_entry():
 
     year = _prompt_until_valid('Enter stock price year: ',
                                type_=int,
-                               pattern='^\d{4}$')
+                               pattern=YEARS)
 
     month = _prompt_until_valid('Enter stock price month: ',
                                 type_=int,
-                                pattern='^\d{1,2}$')
+                                pattern=MONTHS)
 
     day = _prompt_until_valid('Enter stock price day: ',
                               type_=int,
-                              pattern='^\d{1,2}$')
+                              pattern=DAYS)
 
     price = _prompt_until_valid('Enter the stock price: ',
                                 type_=float,

@@ -21,6 +21,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 # Python standard library imports.
+import re
 import sys
 import logging
 from enum import Enum
@@ -197,10 +198,22 @@ def _add_database_entry():
         company = db.Companies(id=company_id)
         session.add(company)
 
-    year = _prompt_until_valid('Enter stock price year: ', type_=int)
-    month = _prompt_until_valid('Enter stock price month: ', type_=int)
-    day = _prompt_until_valid('Enter stock price day: ', type_=int)
-    price = _prompt_until_valid('Enter the stock price: ', type_=float)
+    year = _prompt_until_valid('Enter stock price year: ',
+                               type_=int,
+                               pattern='^\d{4}$')
+
+    month = _prompt_until_valid('Enter stock price month: ',
+                                type_=int,
+                                pattern='^\d{1,2}$')
+
+    day = _prompt_until_valid('Enter stock price day: ',
+                              type_=int,
+                              pattern='^\d{1,2}$')
+
+    price = _prompt_until_valid('Enter the stock price: ',
+                                type_=float,
+                                pattern='^\d+\.?\d*$')
+
     stock_price = db.StockPrices(company_id=company_id,
                                  price=price,
                                  date=date(year, month, day))
@@ -231,21 +244,27 @@ def _prompt_db_credentials(host, port, database):
     return username, password
 
 
-def _prompt_until_valid(prompt, error=None, type_=str, input=input):
+def _prompt_until_valid(prompt, error=None, type_=str, input=input, pattern='.+'):
     """
     Prompt the user for input until it matches `type_`.
     """
 
     while True:
         try:
-            return type_(input(prompt))
+            user_input = input(prompt)
+            if not re.search(pattern, user_input):
+                raise ValueError
+
+            return type_(user_input)
 
         except ValueError:
             if error:
                 print(error)
 
             else:
-                print('Input must be of type `{}`.'.format(type_.__name__))
+                msg = 'Input must be of type `{}` and match pattern `{}`'
+                msg = msg.format(type_.__name__, pattern)
+                print(msg)
 
 
 class _MainOperation(Enum):

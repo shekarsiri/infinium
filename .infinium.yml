@@ -1,7 +1,7 @@
 general:
   model_path: data/valuation_model.yml
   log_path: .infinium.log
-  verbose: True
+  verbose: False
   debug: False
 database:
   dialect: postgresql

@@ -20,6 +20,9 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 """
 
+# Python standard library imports.
+from datetime import date
+
 # Third-party imports.
 from sqlalchemy import Column, String, ForeignKey, Enum, null, Date, Float, create_engine
 from sqlalchemy.orm import relationship, backref, sessionmaker
@@ -36,6 +39,44 @@ __contact__ = data.Developer.EMAIL[__maintainer__]
 
 # Module constants.
 _Base = declarative_base()
+
+
+def get_finance_record(session, company_id, year):
+    """
+    Get a record from the Finances table.
+
+    Args
+      session: The Session object to query.
+      company_id: ID of the company whose record to extract.
+      year: Year of the record to extract as an integer.
+
+    Return
+      Record of the given company's finances at the given year, or None if no
+      such record exists.
+
+    """
+
+    for finances in session.query(Finances.company_id).filter(Finances.company_id == company_id,
+                                                              Finances.year == date(year, 1, 1)):
+
+        return finances
+
+
+def get_company_record(session, company_id):
+    """
+    Get a record from the Companies table.
+
+    Args
+      session: The session object to query.
+      company_id: ID of the company whose record to extract.
+
+    Return
+      Company record of the given ``company_id``.
+
+    """
+
+    for company in session.query(Companies.id).filter(Companies.id == company_id):
+        return company
 
 
 def extract_training_data(database):

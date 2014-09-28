@@ -201,10 +201,8 @@ def _add_database_entry():
 
     session = db.Session()
     company_id = input('\nEnter company ID: ')
-    for _ in session.query(db.Companies.id).filter(db.Companies.id == company_id):
-        break
 
-    else:
+    if not db.get_company_record(session, company_id):
         company = db.Companies(id=company_id)
         session.add(company)
 
@@ -229,11 +227,8 @@ def _add_database_entry():
                                  date=date(year, month, day))
 
     session.add(stock_price)
-    for _ in session.query(db.Finances.company_id).filter(db.Finances.company_id == company_id,
-                                                          db.Finances.year == date(year, 1, 1)):
-        break
 
-    else:
+    if not db.get_finance_record(session, company_id, year):
         roe = _prompt_until_valid('Enter return on equity: ',
                                   type_=float,
                                   pattern=DOLLARS)

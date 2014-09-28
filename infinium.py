@@ -92,13 +92,12 @@ def configure_logging(cl_args, configuration):
                                   datefmt='%m/%d/%Y %I:%M:%S %p')
 
     root = logging.getLogger()
+    root.setLevel(log_level)
     file_handler = logging.FileHandler(str(configuration.log_path))
-    file_handler.setLevel(log_level)
     file_handler.setFormatter(formatter)
     root.addHandler(file_handler)
     if cl_args.verbose or configuration.verbose:
         stderr_handler = logging.StreamHandler(sys.stderr)
-        stderr_handler.setLevel(log_level)
         stderr_handler.setFormatter(formatter)
         root.addHandler(stderr_handler)
 

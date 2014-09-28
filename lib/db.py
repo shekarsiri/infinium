@@ -56,8 +56,8 @@ def get_finance_record(session, company_id, year):
 
     """
 
-    for finances in session.query(Finances.company_id).filter(Finances.company_id == company_id,
-                                                              Finances.year == date(year, 1, 1)):
+    for finances in session.query(Finances).filter(Finances.company_id == company_id,
+                                                   Finances.year == date(year, 1, 1)):
 
         return finances
 
@@ -75,7 +75,7 @@ def get_company_record(session, company_id):
 
     """
 
-    for company in session.query(Companies.id).filter(Companies.id == company_id):
+    for company in session.query(Companies).filter(Companies.id == company_id):
         return company
 
 

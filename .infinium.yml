@@ -1,11 +1,13 @@
 general:
   model_path: data/valuation_model.yml
   log_path: .infinium.log
+  verbose: False
+  debug: False
 database:
   dialect: postgresql
   driver: psycopg2
-  username: jgenson
-  password: 9eNtHpG3!@#
+  username: infinium
+  password: infinium
   host: localhost
   port: 5432
   database: infinium

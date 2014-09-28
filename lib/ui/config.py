@@ -198,6 +198,14 @@ class _Configuration:
     def log_path(self, value):
         self.__update_field('general', 'log_path', value)
 
+    @property
+    def verbose(self):
+        return bool(self.__get_field('general', 'verbose'))
+
+    @property
+    def debug(self):
+        return bool(self.__get_field('general', 'debug'))
+
 
     ## sgd_classifier section ##
     @property

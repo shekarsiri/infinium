@@ -24,7 +24,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 from datetime import date
 
 # Third-party imports.
-from sqlalchemy import Column, String, ForeignKey, Enum, null, Date, Float, create_engine
+from sqlalchemy import Column, String, ForeignKey, Enum, Date, Float, create_engine
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 

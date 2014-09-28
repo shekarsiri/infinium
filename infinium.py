@@ -87,7 +87,7 @@ def configure_logging(cl_args, configuration):
 
     """
 
-    log_level = logging.DEBUG if cl_args.debug else logging.INFO
+    log_level = logging.DEBUG if cl_args.debug or configuration.debug else logging.INFO
     formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s',
                                   datefmt='%m/%d/%Y %I:%M:%S %p')
 
@@ -96,7 +96,7 @@ def configure_logging(cl_args, configuration):
     file_handler.setLevel(log_level)
     file_handler.setFormatter(formatter)
     root.addHandler(file_handler)
-    if cl_args.verbose:
+    if cl_args.verbose or configuration.verbose:
         stderr_handler = logging.StreamHandler(sys.stderr)
         stderr_handler.setLevel(log_level)
         stderr_handler.setFormatter(formatter)

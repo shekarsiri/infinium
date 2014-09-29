@@ -216,11 +216,11 @@ def _add_database_entry():
                                pattern=YEARS)
 
     if price is not None:
-        month = _prompt_until_valid('Enter stock price month: ',
+        month = _prompt_until_valid('Enter target month: ',
                                     type_=int,
                                     pattern=MONTHS)
 
-        day = _prompt_until_valid('Enter stock price day: ',
+        day = _prompt_until_valid('Enter target day: ',
                                   type_=int,
                                   pattern=DAYS)
 

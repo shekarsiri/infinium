@@ -149,9 +149,9 @@ class Finances(_Base):
     operating_margin = Column(Float)
 
 
-class StockPrices(_Base):
-    __tablename__ = 'stock_prices'
-    company = relationship(Companies, backref=backref('stock_prices', uselist=True))
+class Stocks(_Base):
+    __tablename__ = 'stocks'
+    company = relationship(Companies, backref=backref('stocks', uselist=True))
     company_id = Column(String, ForeignKey('companies.id'), primary_key=True)
     date = Column(Date, primary_key=True)
     price = Column(Float)

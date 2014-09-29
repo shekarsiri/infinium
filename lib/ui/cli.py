@@ -222,7 +222,7 @@ def _add_database_entry():
                                 type_=float,
                                 pattern=DOLLARS)
 
-    stock_price = db.StockPrices(company_id=company_id,
+    stock_price = db.Stocks(company_id=company_id,
                                  price=price,
                                  date=date(year, month, day))
 

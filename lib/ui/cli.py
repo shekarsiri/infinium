@@ -222,12 +222,12 @@ def _add_database_entry():
 
         if industry_id == new_industry:
             industry_name = _prompt_until_valid('Enter new industry name: ')
-            industry_table = db.Industries(name=industry_name)
+            industry_table = db.Industry(name=industry_name)
             session.add(industry_table)
             session.commit()
             industry_id = db.get_industry_id(session, industry_name)
 
-        company = db.Companies(id=company_id,
+        company = db.Company(id=company_id,
                                industry_id=industry_id,
                                name=company_name)
 
@@ -264,7 +264,7 @@ def _add_database_entry():
                                   type_=float,
                                   pattern=RATIO)
 
-        stock = db.Stocks(company_id=company_id,
+        stock = db.Stock(company_id=company_id,
                           price=price,
                           date=date(year, month, day),
                           earnings_per_share=eps,

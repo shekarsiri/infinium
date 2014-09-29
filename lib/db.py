@@ -147,6 +147,7 @@ class Companies(_Base):
     industry = relationship(Industries, backref=backref('industries', uselist=True))
     id = Column(String, primary_key=True)
     industry_id = Column(ForeignKey('industries.id'))
+    name = Column(String)
 
 
 class Finances(_Base):

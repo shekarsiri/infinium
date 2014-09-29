@@ -204,13 +204,14 @@ def _add_database_entry():
     company_id = _prompt_until_valid('\nEnter company ID: ')
 
     if not db.get_company_record(session, company_id):
+        company_name = _prompt_until_valid('Enter company name: ')
         industries = db.get_industries(session)
         prompt = '\nWhich industry is this company in?\n'
         prompt += 'Choose a numeric selection from the options below.\n'
         for count, industry in enumerate(industries):
             prompt += '  {} - {}\n'.format(count+1, industry)
 
-        new_industry = count + 2
+        new_industry = count + 2 if industries else 1
         prompt += '  {} - Add new industry\n'.format(new_industry)
         prompt += '\nEnter selection: '
         error = '\nYou must choose a number from the menu. Try again.'
@@ -226,7 +227,10 @@ def _add_database_entry():
             session.commit()
             industry_id = db.get_industry_id(session, industry_name)
 
-        company = db.Companies(id=company_id, industry_id=industry_id)
+        company = db.Companies(id=company_id,
+                               industry_id=industry_id,
+                               name=company_name)
+
         session.add(company)
 
     price = _prompt_until_valid('Enter the stock price: ',

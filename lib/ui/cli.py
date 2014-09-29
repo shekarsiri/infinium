@@ -201,7 +201,7 @@ def _add_database_entry():
     """
 
     session = db.Session()
-    company_id = input('\nEnter company ID: ')
+    company_id = _prompt_until_valid('\nEnter company ID: ')
 
     if not db.get_company_record(session, company_id):
         industries = db.get_industries(session)
@@ -220,7 +220,7 @@ def _add_database_entry():
                                           error=error)
 
         if industry_id == new_industry:
-            industry_name = input('Enter new industry name: ')
+            industry_name = _prompt_until_valid('Enter new industry name: ')
             industry_table = db.Industries(name=industry_name)
             session.add(industry_table)
             session.commit()
@@ -236,9 +236,10 @@ def _add_database_entry():
 
     year = _prompt_until_valid('Enter target year: ',
                                type_=int,
-                               pattern=YEARS)
+                               pattern=YEARS,
+                               nullable=True)
 
-    if price is not None:
+    if price and year:
         month = _prompt_until_valid('Enter target month: ',
                                     type_=int,
                                     pattern=MONTHS)
@@ -268,7 +269,7 @@ def _add_database_entry():
 
         session.add(stock)
 
-    if not db.get_finance_record(session, company_id, year):
+    if year and not db.get_finance_record(session, company_id, year):
         _prompt_financials(session, company_id, year)
 
     session.commit()
@@ -280,7 +281,7 @@ def _prompt_financials(session, company_id, year):
                                   pattern=DOLLARS,
                                   nullable=True)
 
-        if roe is None:
+        if not roe:
             return
 
         npm = _prompt_until_valid('Enter net profit margin: ',

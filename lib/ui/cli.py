@@ -206,32 +206,44 @@ def _add_database_entry():
         company = db.Companies(id=company_id)
         session.add(company)
 
-    year = _prompt_until_valid('Enter stock price year: ',
+    price = _prompt_until_valid('Enter the stock price: ',
+                                type_=float,
+                                pattern=DOLLARS,
+                                nullable=True)
+
+    year = _prompt_until_valid('Enter target year: ',
                                type_=int,
                                pattern=YEARS)
 
-    month = _prompt_until_valid('Enter stock price month: ',
-                                type_=int,
-                                pattern=MONTHS)
+    if price is not None:
+        month = _prompt_until_valid('Enter stock price month: ',
+                                    type_=int,
+                                    pattern=MONTHS)
 
-    day = _prompt_until_valid('Enter stock price day: ',
-                              type_=int,
-                              pattern=DAYS)
+        day = _prompt_until_valid('Enter stock price day: ',
+                                  type_=int,
+                                  pattern=DAYS)
 
-    price = _prompt_until_valid('Enter the stock price: ',
-                                type_=float,
-                                pattern=DOLLARS)
+        stock = db.Stocks(company_id=company_id,
+                          price=price,
+                          date=date(year, month, day))
 
-    stock_price = db.Stocks(company_id=company_id,
-                                 price=price,
-                                 date=date(year, month, day))
-
-    session.add(stock_price)
+        session.add(stock)
 
     if not db.get_finance_record(session, company_id, year):
+        _prompt_financials(session, company_id, year)
+
+    session.commit()
+
+
+def _prompt_financials(session, company_id, year):
         roe = _prompt_until_valid('Enter return on equity: ',
                                   type_=float,
-                                  pattern=DOLLARS)
+                                  pattern=DOLLARS,
+                                  nullable=True)
+
+        if roe is None:
+            return
 
         npm = _prompt_until_valid('Enter net profit margin: ',
                                   type_=float,
@@ -279,8 +291,6 @@ def _add_database_entry():
 
         session.add(finances)
 
-    session.commit()
-
 
 def _prompt_db_credentials(host, port, database):
     """
@@ -304,7 +314,12 @@ def _prompt_db_credentials(host, port, database):
     return username, password
 
 
-def _prompt_until_valid(prompt, error=None, type_=str, input=input, pattern='.+'):
+def _prompt_until_valid(prompt,
+                        error=None,
+                        type_=str,
+                        input=input,
+                        pattern='.+',
+                        nullable=False):
     """
     Prompt the user for input until it matches `type_`.
     """
@@ -312,6 +327,9 @@ def _prompt_until_valid(prompt, error=None, type_=str, input=input, pattern='.+'
     while True:
         try:
             user_input = input(prompt)
+            if nullable and not user_input.strip():
+                return None
+
             if not re.search(pattern, user_input):
                 raise ValueError
 

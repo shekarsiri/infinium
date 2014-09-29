@@ -47,6 +47,7 @@ DOLLARS = '^\d*\.?\d{0,2}$'
 YEARS = '^\d{4}$'
 MONTHS = '^\d{1,2}$'
 DAYS = '^\d{1,2}$'
+RATIO = '^0*\.\d+$'
 
 WELCOME_MESSAGE = """
 Welcome to Infinium - cutting-edge stock valuation and analysis software.
@@ -203,7 +204,30 @@ def _add_database_entry():
     company_id = input('\nEnter company ID: ')
 
     if not db.get_company_record(session, company_id):
-        company = db.Companies(id=company_id)
+        industries = db.get_industries(session)
+        prompt = '\nWhich industry is this company in?\n'
+        prompt += 'Choose a numeric selection from the options below.\n'
+        for index, industry in enumerate(industries):
+            prompt += '  {} - {}\n'.format(index+1, industry)
+
+        new_industry = index + 2
+        prompt += '  {} - Add new industry\n'.format(new_industry)
+        prompt += '\nEnter selection: '
+        pattern = '^\d{1,' + str(len(industries) + 1) + '}$'
+        error = '\nYou must choose a number from the menu. Try again.'
+        industry_id = _prompt_until_valid(prompt,
+                                          type_=int,
+                                          pattern=pattern,
+                                          error=error)
+
+        if industry_id == new_industry:
+            industry_name = input('Enter new industry name: ')
+            industry_table = db.Industries(name=industry_name)
+            session.add(industry_table)
+            session.commit()
+            industry_id = db.get_industry_id(session, industry_name)
+
+        company = db.Companies(id=company_id, industry_id=industry_id)
         session.add(company)
 
     price = _prompt_until_valid('Enter the stock price: ',
@@ -224,9 +248,24 @@ def _add_database_entry():
                                   type_=int,
                                   pattern=DAYS)
 
+        eps = _prompt_until_valid('Enter earnings per share: ',
+                                  type_=float,
+                                  pattern=DOLLARS)
+
+        dividend = _prompt_until_valid('Enter dividend: ',
+                                       type_=float,
+                                       pattern=DOLLARS)
+
+        dpr = _prompt_until_valid('Enter dividend payout ratio: ',
+                                  type_=float,
+                                  pattern=RATIO)
+
         stock = db.Stocks(company_id=company_id,
                           price=price,
-                          date=date(year, month, day))
+                          date=date(year, month, day),
+                          earnings_per_share=eps,
+                          dividend=dividend,
+                          dividend_payout_ratio=dpr)
 
         session.add(stock)
 

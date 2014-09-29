@@ -56,8 +56,7 @@ def get_finance_record(session, company_id, year):
 
     """
 
-    for finances in session.query(Finances).filter(Finances.company_id == company_id,
-                                                   Finances.year == date(year, 1, 1)):
+    for finances in session.query(Finances).filter(Finances.company_id == company_id, Finances.year == date(year, 1, 1)):
 
         return finances
 
@@ -120,10 +119,27 @@ def connect_database(dialect, driver, username, password, host, port, database,
     Session = sessionmaker(bind=engine)
 
 
+def get_industries(session):
+    """
+    Return list of industries from database, ordered by ``industry_id``.
+    """
+
+    industries = session.query(Industries).all()
+    return [x.name for x in sorted(industries, key=lambda x: x.id)]
+
+
+def get_industry_id(session, name):
+    """
+    Return ``id`` of the corresponding industry ``name``.
+    """
+
+    return session.query(Industries).filter(Industries.name == name).add_column('id').first().id
+
+
 class Industries(_Base):
     __tablename__ = 'industries'
     id = Column(Integer, primary_key=True, autoincrement=True)
-    industry = Column(String, unique=True)
+    name = Column(String, unique=True)
 
 
 class Companies(_Base):

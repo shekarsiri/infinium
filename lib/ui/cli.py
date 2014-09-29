@@ -207,17 +207,16 @@ def _add_database_entry():
         industries = db.get_industries(session)
         prompt = '\nWhich industry is this company in?\n'
         prompt += 'Choose a numeric selection from the options below.\n'
-        for index, industry in enumerate(industries):
-            prompt += '  {} - {}\n'.format(index+1, industry)
+        for count, industry in enumerate(industries):
+            prompt += '  {} - {}\n'.format(count+1, industry)
 
-        new_industry = index + 2
+        new_industry = count + 2
         prompt += '  {} - Add new industry\n'.format(new_industry)
         prompt += '\nEnter selection: '
-        pattern = '^\d{1,' + str(len(industries) + 1) + '}$'
         error = '\nYou must choose a number from the menu. Try again.'
         industry_id = _prompt_until_valid(prompt,
                                           type_=int,
-                                          pattern=pattern,
+                                          bounds=(1, new_industry+1),
                                           error=error)
 
         if industry_id == new_industry:
@@ -358,7 +357,8 @@ def _prompt_until_valid(prompt,
                         type_=str,
                         input=input,
                         pattern='.+',
-                        nullable=False):
+                        nullable=False,
+                        bounds=None):
     """
     Prompt the user for input until it matches `type_`.
     """
@@ -372,7 +372,11 @@ def _prompt_until_valid(prompt,
             if not re.search(pattern, user_input):
                 raise ValueError
 
-            return type_(user_input)
+            typed_input = type_(user_input)
+            if bounds and not bounds[0] < typed_input < bounds[1]:
+                raise ValueError
+
+            return typed_input
 
         except ValueError:
             if error:

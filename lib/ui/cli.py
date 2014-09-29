@@ -191,7 +191,7 @@ def _main_prompt():
     prompt += '  5 - Exit\n'
     prompt += '\nEnter selection: '
     return _prompt_until_valid(prompt,
-                               type_=lambda x : _MainOperation(int(x)),
+                               type_=lambda x: _MainOperation(int(x)),
                                error='\nYou must choose a number from the menu. Try again.')
 
 
@@ -373,7 +373,7 @@ def _prompt_until_valid(prompt,
                 raise ValueError
 
             typed_input = type_(user_input)
-            if bounds and not bounds[0] < typed_input < bounds[1]:
+            if bounds and not bounds[0] <= typed_input < bounds[1]:
                 raise ValueError
 
             return typed_input

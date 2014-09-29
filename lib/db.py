@@ -24,7 +24,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 from datetime import date
 
 # Third-party imports.
-from sqlalchemy import Column, String, ForeignKey, Enum, Date, Float, create_engine
+from sqlalchemy import Column, String, ForeignKey, Integer, Date, Float, create_engine
 from sqlalchemy.orm import relationship, backref, sessionmaker
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -120,9 +120,17 @@ def connect_database(dialect, driver, username, password, host, port, database,
     Session = sessionmaker(bind=engine)
 
 
+class Industries(_Base):
+    __tablename__ = 'industries'
+    id = Column(Integer, primary_key=True, autoincrement=True)
+    industry = Column(String, unique=True)
+
+
 class Companies(_Base):
     __tablename__ = 'companies'
+    industry = relationship(Industries, backref=backref('industries', uselist=True))
     id = Column(String, primary_key=True)
+    industry_id = Column(ForeignKey('industries.id'))
 
 
 class Finances(_Base):
@@ -147,8 +155,10 @@ class StockPrices(_Base):
     company_id = Column(String, ForeignKey('companies.id'), primary_key=True)
     date = Column(Date, primary_key=True)
     price = Column(Float)
-    valuation = Column(Enum('accurate', 'low', 'very_low', name='valuation'),
-                       nullable=True)
+    earnings_per_share = Column(Float)
+    dividend = Column(Float)
+    dividend_payout_ratio = Column(Float)
+    intrinsic_value = Column(Float, nullable=True)
 
 
 class Session:

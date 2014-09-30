@@ -265,12 +265,12 @@ def _add_database_entry():
 
 
 def _prompt_financials(session, company_id, year):
-        roe = _prompt_until_valid('Enter return on equity: ',
-                                  type_=float,
-                                  pattern=DOLLARS,
-                                  nullable=True)
+        shareholders_equity = _prompt_until_valid("Enter shareholder's equity: ",
+                                                  type_=float,
+                                                  pattern=DOLLARS,
+                                                  nullable=True)
 
-        if not roe:
+        if not shareholders_equity:
             return
 
         npm = _prompt_until_valid('Enter net profit margin: ',
@@ -285,6 +285,7 @@ def _prompt_financials(session, company_id, year):
                                          type_=float,
                                          pattern=DOLLARS)
 
+        roe = net_income / shareholders_equity
         epsg = _prompt_until_valid('Enter earnings per share growth: ',
                                    type_=float,
                                    pattern=DOLLARS)

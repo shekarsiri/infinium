@@ -355,8 +355,8 @@ def _prompt_until_valid(prompt,
 
     while True:
         try:
-            user_input = input(prompt)
-            if nullable and not user_input.strip():
+            user_input = input(prompt).strip()
+            if nullable and not user_input:
                 return None
 
             if not re.search(pattern, user_input):

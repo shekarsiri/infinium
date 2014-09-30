@@ -172,9 +172,6 @@ class Stock(_Base):
     company_id = Column(String, ForeignKey('companies.id'), primary_key=True)
     date = Column(Date, primary_key=True)
     price = Column(Float, nullable=False)
-    earnings_per_share = Column(Float, nullable=False)
-    dividend = Column(Float, nullable=False)
-    dividend_payout_ratio = Column(Float, nullable=False)
     intrinsic_value = Column(Float)
 
 

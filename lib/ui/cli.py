@@ -252,24 +252,9 @@ def _add_database_entry():
                                   type_=int,
                                   pattern=DAYS)
 
-        eps = _prompt_until_valid('Enter earnings per share: ',
-                                  type_=float,
-                                  pattern=DOLLARS)
-
-        dividend = _prompt_until_valid('Enter dividend: ',
-                                       type_=float,
-                                       pattern=DOLLARS)
-
-        dpr = _prompt_until_valid('Enter dividend payout ratio: ',
-                                  type_=float,
-                                  pattern=RATIO)
-
         stock = db.Stock(company_id=company_id,
-                          price=price,
-                          date=date(year, month, day),
-                          earnings_per_share=eps,
-                          dividend=dividend,
-                          dividend_payout_ratio=dpr)
+                         price=price,
+                         date=date(year, month, day))
 
         session.add(stock)
 

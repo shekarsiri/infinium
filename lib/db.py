@@ -1,7 +1,7 @@
 """
 Interface to Infinium database systems.
 
-Copyright 2014 Jerrad M. Genson
+Copyright 2014, 2015 Jerrad M. Genson
 
 This file is part of Infinium.
 
@@ -82,41 +82,33 @@ def extract_training_data(database):
     raise NotImplementedError('`extract_training_data` operation not yet implemented.')
 
 
-def connect_database(dialect, driver, username, password, host, port, database,
-                     echo=False):
+def connect_database(configuration):
     """
-    Connect to the Infinium database. ``Session`` may be instantiated only
-    after successfully calling this function.
+    Connect to the Infinium database and create a ``Session`` class which can
+    be instantiated to interact with the database.
 
-    Args
-      dialect: The database dialect (e.g. 'postgresql').
-      driver: The database driver (e.g. 'psycopg2').
-      username: Database access credentials username.
-      password: Database access credentials password.
-      host: IP address of the database host machine.
-      port: Which port the database service is listening on.
-      database: Name of the database.
-      echo: ``True`` to make database queries in verbose mode.
+    Args:
+      configuration: A ``configuration`` object from the ``config`` module.
 
-    Returns
-      None
+    Returns:
+      SQLAlchemy ``Session`` class.
 
     """
-
-    global Session
 
     url = '{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
-    url = url.format(dialect=dialect,
-                     driver=driver,
-                     username=username,
-                     password=password,
-                     host=host,
-                     port=port,
-                     database=database)
+    url = url.format(dialect=configuration.db_dialect,
+                     driver=configuration.db_driver,
+                     username=configuration.db_username,
+                     password=configuration.db_password,
+                     host=configuration.db_host,
+                     port=configuration.db_port,
+                     database=configuration.db_database)
 
-    engine = create_engine(url, echo=echo)
+    engine = create_engine(url, echo=configuration.db_echo)
     _Base.metadata.create_all(engine)
     Session = sessionmaker(bind=engine)
+
+    return Session
 
 
 def get_industries(session):
@@ -173,21 +165,3 @@ class Stock(_Base):
     date = Column(Date, primary_key=True)
     price = Column(Float, nullable=False)
     intrinsic_value = Column(Float)
-
-
-class Session:
-    """
-    Do not instantiate this class. You must call ``connect_database`` first.
-    """
-
-    def __init__(self):
-        raise SessionNotDefinedError('No database has been connected.')
-
-
-class SessionNotDefinedError(Exception):
-    """
-    Indicates a `Session` instance was created before `connect_database` was called.
-
-    """
-
-    pass

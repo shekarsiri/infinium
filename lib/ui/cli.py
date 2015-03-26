@@ -1,7 +1,7 @@
 """
 Implements a command line interface for Infinium.
 
-Copyright 2014 Jerrad M. Genson
+Copyright 2014, 2015 Jerrad M. Genson
 
 This file is part of Infinium.
 
@@ -85,19 +85,9 @@ def launch_cli(configuration):
     _show_welcome()
 
     # Connect to database.
-    username = configuration.db_username
-    password = configuration.db_password
     while True:
         try:
-            db.connect_database(configuration.db_dialect,
-                                configuration.db_driver,
-                                username,
-                                password,
-                                configuration.db_host,
-                                configuration.db_port,
-                                configuration.db_database,
-                                configuration.db_echo)
-
+            Session = db.connect_database(configuration)
             break
 
         except OperationalError:
@@ -105,6 +95,9 @@ def launch_cli(configuration):
             username, password = _prompt_db_credentials(configuration.db_host,
                                                         configuration.db_port,
                                                         configuration.db_database)
+
+            configuration.db_username = username
+            configuration.db_password = password
 
     msg = 'Connected to database at {}:{}/{}'
     msg = msg.format(configuration.db_host,
@@ -122,7 +115,7 @@ def launch_cli(configuration):
             construct_model(configuration)
 
         elif main_operation is _MainOperation.add_database_entry:
-            _add_database_entry()
+            _add_database_entry(Session)
 
         elif main_operation is _MainOperation.parse_annual_report:
             raise NotImplementedError()
@@ -195,12 +188,19 @@ def _main_prompt():
                                error='\nYou must choose a number from the menu. Try again.')
 
 
-def _add_database_entry():
+def _add_database_entry(Session):
     """
     Event handler for `Add database entry`.
+
+    Args:
+      Session: A SQLAlchemy ``Session`` class.
+
+    Returns:
+      None
+
     """
 
-    session = db.Session()
+    session = Session()
     company_id = _prompt_until_valid('\nEnter company ID: ')
 
     if not db.get_company_record(session, company_id):
@@ -228,8 +228,8 @@ def _add_database_entry():
             industry_id = db.get_industry_id(session, industry_name)
 
         company = db.Company(id=company_id,
-                               industry_id=industry_id,
-                               name=company_name)
+                             industry_id=industry_id,
+                             name=company_name)
 
         session.add(company)
 

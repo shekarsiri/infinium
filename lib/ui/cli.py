@@ -36,6 +36,7 @@ import argparse
 from lib import db
 from lib.ml import construct_model
 from lib.data import PROGRAM_NAME, Developer, ExitCode
+from lib.ui.config import get_config
 
 
 __maintainer__ = Developer.JERRAD_GENSON
@@ -69,25 +70,22 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
-def launch_cli(configuration):
+def launch_cli():
     """
     Launch command line interface event loop.
-
-    Args
-      cl_args: Command line arguments from ``parse_command_line``.
-      configuration: Configuration object from ``config.get_config``.
 
     Return
       None; does not return. Terminates program upon completion.
 
     """
 
+    configuration = get_config()
     _show_welcome()
 
     # Connect to database.
     while True:
         try:
-            Session = db.connect_database(configuration)
+            Session = db.connect_database()
             break
 
         except OperationalError:
@@ -112,7 +110,7 @@ def launch_cli(configuration):
         # or construct a new valuation model.
         main_operation = _main_prompt()
         if main_operation is _MainOperation.construct_model:
-            construct_model(configuration)
+            construct_model()
 
         elif main_operation is _MainOperation.add_database_entry:
             _add_database_entry(Session)

@@ -30,6 +30,7 @@ from sqlalchemy.ext.declarative import declarative_base
 
 # Infinium library imports.
 from lib import data
+from lib.ui.config import get_config
 
 
 # Module header.
@@ -82,19 +83,17 @@ def extract_training_data(database):
     raise NotImplementedError('`extract_training_data` operation not yet implemented.')
 
 
-def connect_database(configuration):
+def connect_database():
     """
     Connect to the Infinium database and create a ``Session`` class which can
     be instantiated to interact with the database.
-
-    Args:
-      configuration: A ``configuration`` object from the ``config`` module.
 
     Returns:
       SQLAlchemy ``Session`` class.
 
     """
 
+    configuration = get_config()
     url = '{dialect}+{driver}://{username}:{password}@{host}:{port}/{database}'
     url = url.format(dialect=configuration.db_dialect,
                      driver=configuration.db_driver,

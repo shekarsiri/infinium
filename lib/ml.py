@@ -1,7 +1,7 @@
 """
 Utilities for creating and manipulating machine learning models.
 
-Copyright 2014 Jerrad M. Genson
+Copyright 2014, 2015 Jerrad M. Genson
 
 This file is part of Infinium.
 
@@ -25,21 +25,24 @@ from sklearn.linear_model import SGDClassifier
 
 # Infinium library imports
 from lib.data import Developer
+from lib.ui.config import get_config
 
 
 __maintainer__ = Developer.JERRAD_GENSON
 __contact__ = Developer.EMAIL[__maintainer__]
 
 
-def construct_model(configuration):
-    classifier = create_classifier(configuration)
+def construct_model():
+    configuration = get_config()
+    classifier = create_classifier()
     training_data = extract_training_data(database)
-    train_classifier(classifier, training_data, configuration)
+    train_classifier(classifier, training_data)
 
     return classifier
 
 
-def create_classifier(configuration):
+def create_classifier():
+    configuration = get_config()
     return SGDClassifier(loss=configuration.sgd_loss,
                          penalty=configuration.sgd_penalty,
                          alpha=configuration.sgd_alpha,

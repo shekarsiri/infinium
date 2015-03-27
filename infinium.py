@@ -4,7 +4,7 @@ Infinium's main controller module. Execution begins here.
 Contains command line parser and ``main`` function, which controls overall
 program flow and is where execution begins.
 
-Copyright 2014 Jerrad M. Genson
+Copyright 2014, 2015 Jerrad M. Genson
 
 This file is part of Infinium.
 
@@ -63,7 +63,7 @@ def main():
         sys.exit(data.ExitCode.config_file_not_found.value)
 
     # Configure root Logger.
-    configure_logging(cl_args, configuration)
+    configure_logging(cl_args)
 
     # Launch user interface.
     if cl_args.graphical:
@@ -72,10 +72,10 @@ def main():
 
     else:
         # Use command line interface.
-        launch_cli(configuration)
+        launch_cli()
 
 
-def configure_logging(cl_args, configuration):
+def configure_logging(cl_args):
     """
     Configure root Logger for Infinium.
 
@@ -87,6 +87,7 @@ def configure_logging(cl_args, configuration):
 
     """
 
+    configuration = get_config()
     log_level = logging.DEBUG if cl_args.debug or configuration.debug else logging.INFO
     formatter = logging.Formatter('%(asctime)s %(levelname)s: %(message)s',
                                   datefmt='%m/%d/%Y %I:%M:%S %p')

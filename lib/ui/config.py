@@ -12,7 +12,7 @@ Infinium installation directory, extracted from argv[0].
 
 This module is thread safe.
 
-Copyright 2014 Jerrad M. Genson
+Copyright 2014, 2015 Jerrad M. Genson
 
 This file is part of Infinium.
 

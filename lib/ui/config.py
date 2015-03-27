@@ -56,17 +56,46 @@ __doc__ = __doc__.format(data.CONFIG_FILE_NAME,
                          data.INSTALL_PATH)
 
 
-# Global module variables used to keep configuration file in sync.
-_configuration = None
-_thread_lock = threading.Lock()
+def memoize(func):
+    """
+    To be used as a decorator.
+    Memoize the result of a function call that takes 0 arguments.
+    This is an unusual thing to do, but we need a way to deal with various
+    pieces and threads of Infinium reading and writing to the configuration
+    file, which is unavoidably global state. It would be nice to avoid using
+    global variables or a singleton, both of which can be abused and result in
+    an unintuitive API, and one way to accomplish that is by utilizing
+    memoization instead.
+
+    Args:
+      func: Any function that takes 0 arguments and has no side-effects.
+
+    Returns:
+      A new function that always returns the same object.
+
+    """
+
+    return_object = func()
+    def new_func():
+        return return_object
+
+    new_func.__doc__ = func.__doc__
+    return new_func
 
 
+@memoize
 def get_config():
     """
-    Get Infinium configuration object.
+    Get Infinium Configuration object. The Configuration object is the
+    interface to the Infinium configuration file. It has getter and setter
+    properties for every configuration field. Configuration properties are
+    given a similar name to their field in the configuration file. These can be
+    listed by calling ``help`` on the Configuration object. The Configuration
+    object is memoized so that only one instance of Configuration is created,
+    and shared between callers and threads.
 
     Returns
-      The configuration object.
+      The Configuration object.
 
     Raises
       Any exception that ``Path.open`` and ``yaml.load`` may raise, as well as
@@ -74,14 +103,189 @@ def get_config():
 
     """
 
-    global _configuration
+    thread_lock = threading.Lock()
+    class Configuration:
+        def __init__(self):
+            cwd_config_path = Path(data.CONFIG_FILE_NAME)
+            environ_config_dir = Path(getenv(data.CONFIG_VAR,
+                                             data.DEFAULT_CONFIG_PATH))
 
-    _thread_lock.acquire()
-    if not _configuration:
-        _configuration = _Configuration()
+            environ_config_path = environ_config_dir / data.CONFIG_FILE_NAME
+            install_config_path = data.INSTALL_PATH / data.CONFIG_FILE_NAME
 
-    _thread_lock.release()
-    return _configuration
+            # First look for config file in current working directory.
+            if cwd_config_path.exists():
+                config_path = Path(data.CONFIG_FILE_NAME)
+
+            # Next, look for config file at config environment variable.
+            elif environ_config_path.exists():
+                config_path = environ_config_path
+
+            # Finally try looking for config file in installation directory.
+            elif install_config_path.exists():
+                config_path = install_config_path
+
+            # Config file could not be found.
+            else:
+                msg = 'The configuration file could not be found.'
+                raise ConfigFileNotFoundError(msg)
+
+            with config_path.open() as config_file:
+                self.__configuration = load(config_file, Loader)
+
+            self.__config_path = config_path
+
+        def __update_field(self, section, field, new_value):
+            new_value = str(new_value)
+            thread_lock.acquire()
+            old_value = self.__configuration[section][field]
+            self.__configuration[section][field] = new_value
+            try:
+                with self.__config_path.open('w') as config_file:
+                    dump(self.__configuration,
+                         config_file,
+                         Dumper=Dumper,
+                         default_flow_style=False)
+
+            except Exception:
+                self.__configuration[field] = old_value
+                raise
+
+            finally:
+                thread_lock.release()
+
+        def __get_field(self, section, field):
+            field = str(field)
+            thread_lock.acquire()
+            try:
+               return self.__configuration[section][field]
+
+            except KeyError:
+                self.__handle_key_error(section, field)
+
+            finally:
+                thread_lock.release()
+
+        def __handle_key_error(self, section, field_name):
+            msg = 'Config file section "{}" field "{}" missing from config file "{}".'
+            msg = msg.format(section, field_name, self.config_path)
+            raise ConfigFileCorruptError(msg)
+
+
+        ## general section ##
+        @property
+        def config_path(self):
+            return self.__config_path
+
+        @property
+        def model_path(self):
+            return self.__get_field('general', 'model_path')
+
+        @model_path.setter
+        def model_path(self, value):
+            self.__update_field('general', 'model_path', value)
+
+        @property
+        def log_path(self):
+            return self.__get_field('general', 'log_path')
+
+        @log_path.setter
+        def log_path(self, value):
+            self.__update_field('general', 'log_path', value)
+
+        @property
+        def verbose(self):
+            return bool(self.__get_field('general', 'verbose'))
+
+        @property
+        def debug(self):
+            return bool(self.__get_field('general', 'debug'))
+
+
+        ## sgd_classifier section ##
+        @property
+        def sgd_loss(self):
+            return self.__get_field('sgd_classifier', 'loss')
+
+        @property
+        def sgd_penalty(self):
+            return self.__get_field('sgd_classifier', 'penalty')
+
+        @property
+        def sgd_alpha(self):
+            return float(self.__get_field('sgd_classifier', 'alpha'))
+
+        @property
+        def sgd_l1_ratio(self):
+            return float(self.__get_field('sgd_classifier', 'l1_ratio'))
+
+        @property
+        def sgd_fit_intercept(self):
+            return bool(self.__get_field('sgd_classifier', 'fit_intercept'))
+
+        @property
+        def sgd_n_iter(self):
+            return int(self.__get_field('sgd_classifier', 'n_iter'))
+
+        @property
+        def sgd_shuffle(self):
+            return bool(self.__get_field('sgd_classifier', 'shuffle'))
+
+        @property
+        def sgd_verbose(self):
+            return bool(self.__get_field('sgd_classifier', 'verbose'))
+
+        @property
+        def sgd_n_jobs(self):
+            return int(self.__get_field('sgd_classifier', 'n_jobs'))
+
+        @property
+        def sgd_learning_rate(self):
+            return self.__get_field('sgd_classifier', 'learning_rate')
+
+        @property
+        def sgd_eta0(self):
+            return float(self.__get_field('sgd_classifier', 'eta0'))
+
+        @property
+        def sgd_power_t(self):
+            return float(self.__get_field('sgd_classifier', 'power_t'))
+
+
+        ## database section ##
+        @property
+        def db_dialect(self):
+            return self.__get_field('database', 'dialect')
+
+        @property
+        def db_driver(self):
+            return self.__get_field('database', 'driver')
+
+        @property
+        def db_username(self):
+            return self.__get_field('database', 'username')
+
+        @property
+        def db_password(self):
+            return self.__get_field('database', 'password')
+
+        @property
+        def db_host(self):
+            return self.__get_field('database', 'host')
+
+        @property
+        def db_port(self):
+            return self.__get_field('database', 'port')
+
+        @property
+        def db_database(self):
+            return self.__get_field('database', 'database')
+
+        @property
+        def db_echo(self):
+            return bool(self.__get_field('database', 'echo'))
+
+    return Configuration()
 
 
 class ConfigurationError(Exception):
@@ -109,183 +313,3 @@ class ConfigFileCorruptError(ConfigurationError):
     """
 
     pass
-
-
-class _Configuration:
-    def __init__(self):
-        cwd_config_path = Path(data.CONFIG_FILE_NAME)
-        environ_config_dir = Path(getenv(data.CONFIG_VAR, data.DEFAULT_CONFIG_PATH))
-        environ_config_path = environ_config_dir / data.CONFIG_FILE_NAME
-        install_config_path = data.INSTALL_PATH / data.CONFIG_FILE_NAME
-
-        # First look for config file in current working directory.
-        if cwd_config_path.exists():
-            config_path = Path(data.CONFIG_FILE_NAME)
-
-        # Next, look for config file at config environment variable.
-        elif environ_config_path.exists():
-            config_path = environ_config_path
-
-        # Finally try looking for config file in installation directory.
-        elif install_config_path.exists():
-            config_path = install_config_path
-
-        # Config file could not be found.
-        else:
-            msg = 'The configuration file could not be found.'
-            raise ConfigFileNotFoundError(msg)
-
-        with config_path.open() as config_file:
-            self.__configuration = load(config_file, Loader)
-
-        self.__config_path = config_path
-
-    def __update_field(self, section, field, new_value):
-        new_value = str(new_value)
-        _thread_lock.acquire()
-        old_value = self.__configuration[section][field]
-        self.__configuration[section][field] = new_value
-        try:
-            with self.__config_path.open('w') as config_file:
-                dump(self.__configuration,
-                     config_file,
-                     Dumper=Dumper,
-                     default_flow_style=False)
-
-        except Exception:
-            self.__configuration[field] = old_value
-            raise
-
-        finally:
-            _thread_lock.release()
-
-    def __get_field(self, section, field):
-        field = str(field)
-        _thread_lock.acquire()
-        try:
-           return self.__configuration[section][field]
-
-        except KeyError:
-            self.__handle_key_error(section, field)
-
-        finally:
-            _thread_lock.release()
-
-    def __handle_key_error(self, section, field_name):
-        msg = 'Config file section "{}" field "{}" missing from config file "{}".'
-        msg = msg.format(section, field_name, self.config_path)
-        raise ConfigFileCorruptError(msg)
-
-
-    ## general section ##
-    @property
-    def config_path(self):
-        return self.__config_path
-
-    @property
-    def model_path(self):
-        return self.__get_field('general', 'model_path')
-
-    @model_path.setter
-    def model_path(self, value):
-        self.__update_field('general', 'model_path', value)
-
-    @property
-    def log_path(self):
-        return self.__get_field('general', 'log_path')
-
-    @log_path.setter
-    def log_path(self, value):
-        self.__update_field('general', 'log_path', value)
-
-    @property
-    def verbose(self):
-        return bool(self.__get_field('general', 'verbose'))
-
-    @property
-    def debug(self):
-        return bool(self.__get_field('general', 'debug'))
-
-
-    ## sgd_classifier section ##
-    @property
-    def sgd_loss(self):
-        return self.__get_field('sgd_classifier', 'loss')
-
-    @property
-    def sgd_penalty(self):
-        return self.__get_field('sgd_classifier', 'penalty')
-
-    @property
-    def sgd_alpha(self):
-        return float(self.__get_field('sgd_classifier', 'alpha'))
-
-    @property
-    def sgd_l1_ratio(self):
-        return float(self.__get_field('sgd_classifier', 'l1_ratio'))
-
-    @property
-    def sgd_fit_intercept(self):
-        return bool(self.__get_field('sgd_classifier', 'fit_intercept'))
-
-    @property
-    def sgd_n_iter(self):
-        return int(self.__get_field('sgd_classifier', 'n_iter'))
-
-    @property
-    def sgd_shuffle(self):
-        return bool(self.__get_field('sgd_classifier', 'shuffle'))
-
-    @property
-    def sgd_verbose(self):
-        return bool(self.__get_field('sgd_classifier', 'verbose'))
-
-    @property
-    def sgd_n_jobs(self):
-        return int(self.__get_field('sgd_classifier', 'n_jobs'))
-
-    @property
-    def sgd_learning_rate(self):
-        return self.__get_field('sgd_classifier', 'learning_rate')
-
-    @property
-    def sgd_eta0(self):
-        return float(self.__get_field('sgd_classifier', 'eta0'))
-
-    @property
-    def sgd_power_t(self):
-        return float(self.__get_field('sgd_classifier', 'power_t'))
-
-
-    ## database section ##
-    @property
-    def db_dialect(self):
-        return self.__get_field('database', 'dialect')
-
-    @property
-    def db_driver(self):
-        return self.__get_field('database', 'driver')
-
-    @property
-    def db_username(self):
-        return self.__get_field('database', 'username')
-
-    @property
-    def db_password(self):
-        return self.__get_field('database', 'password')
-
-    @property
-    def db_host(self):
-        return self.__get_field('database', 'host')
-
-    @property
-    def db_port(self):
-        return self.__get_field('database', 'port')
-
-    @property
-    def db_database(self):
-        return self.__get_field('database', 'database')
-
-    @property
-    def db_echo(self):
-        return bool(self.__get_field('database', 'echo'))

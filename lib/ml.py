@@ -22,6 +22,7 @@ along with Infinium.  If not, see <http://www.gnu.org/licenses/>.
 
 # Third-party library imports
 from sklearn.linear_model import SGDClassifier
+from sklearn.externals import joblib
 
 # Infinium library imports
 from lib.data import Developer
@@ -74,11 +75,34 @@ def train_classifier(classifier, training_data):
 
 
 def load_model(path):
-    raise NotImplementedError('`load_valuation_model` operation not yet implemented.')
+    """
+    Load valuation model from target file on storage device.
+
+    Args
+      path: Path to load valuation model from.
+
+    Returns
+      The loaded and deserialized valuation model (sklearn classifier).
+
+    """
+
+    return joblib.load(path)
 
 
 def save_model(valuation_model, path):
-    raise NotImplementedError('`save_valuation_model` operation not yet implemented.')
+    """
+    Save valuation model to target location on storage device.
+
+    Args
+      valuation_model: A classifier returned by ``create_classifier``.
+      path: Path of the file to serialize and write the valuation model to.
+
+    Returns
+      None
+
+    """
+
+    return joblib.dump(valuation_model, path, compress=1)
 
 
 def evaluate_model(valuation_model, testing_data):

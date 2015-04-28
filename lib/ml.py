@@ -57,6 +57,22 @@ def create_classifier():
                          power_t=configuration.sgd_power_t)
 
 
+def extract_training_data(database):
+    """
+    Extract training data from database.
+    """
+
+    raise NotImplementedError('`extract_training_data` not yet implemented.')
+
+
+def train_classifier(classifier, training_data):
+    """
+    Train classifier using the provided training data.
+    """
+
+    raise NotImplementedError('`train_classifier` not yet implemented.')
+
+
 def load_model(path):
     raise NotImplementedError('`load_valuation_model` operation not yet implemented.')
 
